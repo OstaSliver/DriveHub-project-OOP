@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastApi frontend</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <h1>To-Do list</h1>
+    <h2> Create Activity</h2>
+    <input type="number" id="activity_id" placeholder="Activity ID">
+    <input type="text" id="activity_name" placeholder="Activity Name">
+    <button id="CreateBUtton">Create Activity</button>
+
+    <h2> Edit Activity</h2>
+    <input type="number" id="edit_activity_id" placeholder="Activity ID">
+    <input type="text" id="edit_activity_name" placeholder="Activity Name">
+    <button id="EditBUtton">Edit Activity</button>
+
+    <h2> Delete Activity</h2>
+    <input type="number" id="delete_activity_id" placeholder="Activity ID">
+    <button id="DeleteBUtton">Delete Activity</button>
+
+    <br><br>
+    <button id="GetAllBUtton">Get All Activities</button>
+
+    <ul id="activity_list"></ul>
+
+    <script>
+        // Create Activity
+        $('#CreateBUtton').click(function () {
+            var activity_id = $('#activity_id').val();
+            var activity_name = $('#activity_name').val();
+            $.ajax({
+                url: '/todo',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    id: activity_id,
+                    name: activity_name
+                }),
+            });
+        });
+    
+        // Edit Activity
+        $('#EditBUtton').click(function () {
+            var activity_id = $('#edit_activity_id').val();
+            var activity_name = $('#edit_activity_name').val();
+            $.ajax({
+                url: '/todo/' + activity_id,
+                method: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    name: activity_name
+                }),
+            });
+        });
+    
+        // Delete Activity
+        $('#DeleteBUtton').click(function () {
+            var activity_id = $('#delete_activity_id').val();
+            $.ajax({
+                url: '/todo/' + activity_id,
+                method: 'DELETE',
+            });
+        });
+    
+        // Get All Activities
+        $('#GetAllBUtton').click(function () {
+            activity_id = $('#activity_id').val();
+            activity_name = $('#activity_name').val();
+            $.ajax({
+                url: '/todo',
+                method: 'GET',
+                success: function (data) {
+                    console.log(data);
+                    $('#activity_list').empty();
+                    data.forEach(function (activity) {
+                        $('#activity_list').append('<li>' + activity.id + ' - ' + activity.name + '</li>');
+                    });
+                }
+            });
+        });
+        
+    </script>
+</body>
+
+
+</html>
