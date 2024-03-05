@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>register</title>
+</head>
+
+<body>
+    <h1>Register</h1>
+    <form action="/register" method="post" id="register-form">
+        <label for="email">Email</label><br>
+        <input type="text" name="email" id="email"><br>
+        <label for="password">Password</label><br>
+        <input type="password" name="password" id="password"><br>
+        <label for="password">Confirm Password</label><br>
+        <input type="password" name="confirm_password" id="confirm_password"><br>
+        <a href="/login.html">Already have an account?</a><br>
+        <button type="submit" class="submit-button">Register</button>
+    </form>
+</body>
+<script>
+    const apiURL = "http://127.0.0.1:8000";
+    const registerForm = document.getElementById("register-form")
+
+    async function processRegisterForm(evnt) {
+        console.log("Form submit event recieved");
+        evnt.preventDefault();
+        const data = new FormData(evnt.target);
+        console.log(`POSTing email: ${data.get("email")}, password: ${data.get("password")}`);
+        const response = await fetch(`${apiURL}/register`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: data.get("email"),
+                password: data.get("password"),
+                confirm_password: data.get("confirm_password")
+            }),
+        });
+        if (response.status != 200) {
+            alert("Invalid credential");
+            return;
+        }
+        const responseData = await response.json();
+        const token = responseData.token;
+        localStorage.setItem("token", token);
+        window.location.href = "/";
+    }
+    registerForm.addEventListener("submit", processRegisterForm);
+</script>
+
+</html>

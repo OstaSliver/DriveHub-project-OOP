@@ -11,16 +11,24 @@ class WebsiteController:
         self.Payment_list = []
         self.Waiting_for_approval_car_lost = []
 
-    def register(self, email, Name, Phone_Number, Password, Contact_info, Role):
+    def register(self, email, Name, Phone_Number, Password, Role):
         for user in self.User_list:
             if user.email == user.email:
                 return "User already exists"
-        user = User(email, Name, Phone_Number, Password, Contact_info, Role)
+        user = User(email, Name, Phone_Number, Password, Role)
+        
         self.User_list.append(user)
+        return "Registration Successful"
         
         pass
-    def login(self):
-        pass
+    def login(self, email, password):
+        for user in self.User_list:
+            if user.email == email and user.password == password:
+                return "Login Successful"
+            elif user.email == email and user.password != password:
+                return "Incorrect Password"
+        return "Email not found"
+
 
     def add_car(self):
         pass
@@ -57,3 +65,7 @@ class WebsiteController:
 
     def view_reservation(self):
         pass
+
+    @property
+    def user_list(self):
+        return self.User_list
