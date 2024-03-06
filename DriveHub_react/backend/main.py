@@ -89,11 +89,16 @@ async def register(register_data: RegisterModel):
     Password: str = register_data.Password
     Role: str = register_data.Role
 
-    if website.register(email, Name, Phone_Number, Password, Role) == "Registration Successful":
+    log = website.register(email, Name, Phone_Number, Password, Role)
+    if log == "Registration Successful":
         return {"status": "Registration Successful"}
         
-    elif website.register(email, Name, Phone_Number, Password, Role) == "User already exists":
+    elif log == "User already exists":
         raise HTTPException(status_code=401, detail="User already exists")
+    
+    elif log == "Invalid Role":
+        raise HTTPException(status_code=402, detail="Invalid Role")
+    
     return {"status": "Registration Successful"}
 
 @app.get('/User')

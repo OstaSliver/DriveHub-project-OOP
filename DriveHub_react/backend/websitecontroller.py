@@ -58,7 +58,9 @@ class WebsiteController:
 
             self.lender_list.append(lender)
             self.user_list.append(user)
-
+        else:
+            return "Invalid Role"
+        
         return "Registration Successful"
         
         pass

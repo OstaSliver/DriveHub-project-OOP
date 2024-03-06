@@ -8,6 +8,8 @@ function Register() {
   const [lastName, setLastName] = useState("");
   const [tel, setTel] = useState("");
   const [email, setEmail] = useState("");
+  const [role, setRole] = useState("");
+
   const [Password, setPassword] = useState("");
   const [Password_confirmation, setPassword_confirmation] = useState("");
 
@@ -17,33 +19,44 @@ function Register() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const data = {
-      email: `${email}`,
-      Name: `${firstName} ${lastName}`,
-      Phone_Number: tel,
-      Password: "123456",
-      Contact_info: "Contact_info",
-      Role: "customer",
-    };
+
     if (Password === Password_confirmation) {
+
+      
+      const data = {
+        email: `${email}`,
+        Name: `${firstName} ${lastName}`,
+        Phone_Number: tel,
+        Password: `${Password}`,
+        Contact_info: "Contact_info",
+        Role: `${role}`,
+      };
+
       const fetchData = async () => {
         const response = await fetch("http://localhost:8000/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
         });
+
         if (response.status == 401) {
           console.log("Email already exists");
           alert("Email already exists");
+          return;
+        }
+
+        if (response.status == 402) {
+          console.log("invalid input");
+          console.log(data);
+          alert("invalid input");
+          return;
         }
 
         if (response.status == 200) {
           console.log("Registered Successfully");
+          console.log(data);
           alert("Registered Successfully");
-
-          const responseData = await response.json();
-          localStorage.setItem("token", responseData.token);
-          window.location.href = "/Home";
+          // window.location.href = "/login";
         }
       };
 
@@ -175,6 +188,25 @@ function Register() {
               value={Password_confirmation}
               onChange={(e) => setPassword_confirmation(e.target.value)}
             />
+          </div>
+
+          <div className="mb-4">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="role"
+            >
+              Customer/Lender
+            </label>
+            <select
+              className="shadow appearance-none border rounded w-full py-2 px-3
+              text-gray-700 leading-tight focus:outline-none
+              focus:shadow-outline" id="role" type="role" value={role}
+              onChange={(e) => setRole(e.target.value)}
+            >
+              <option>select</option>
+              <option>customer</option>
+              <option>lender</option>
+            </select>
           </div>
 
           <div className="flex items-center justify-between">
