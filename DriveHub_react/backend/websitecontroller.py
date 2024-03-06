@@ -38,7 +38,7 @@ class WebsiteController:
     def register(self, email, Name, Phone_Number, Password, Role):
 
         for user in self.user_list:
-            if user.email == user.email:
+            if user.email == email:
                 return "User already exists"
             
         token = uuid4()
@@ -49,14 +49,16 @@ class WebsiteController:
             user.role = "customer"
 
             self.customer_list.append(customer);
+            self.user_list.append(user)
+            
         elif (Role == "lender"):
             lender = Lender(email, Name, Phone_Number, Password,token)
             user = User(email, Name, Phone_Number, Password,token)
             user.role = "lender"
 
             self.lender_list.append(lender)
+            self.user_list.append(user)
 
-        self.user_list.append(user)
         return "Registration Successful"
         
         pass

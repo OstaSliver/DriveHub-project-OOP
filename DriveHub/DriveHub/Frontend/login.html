@@ -14,7 +14,7 @@
         <input type="text" name="email" id="email"><br>
         <label for="password">Password</label><br>
         <input type="password" name="password" id="password"><br>
-        <a href="/register.html">Don't have an account?</a><br>
+        <a href="/register">Don't have an account?</a><br>
         <button type="submit" class="submit-button">Login</button>
     </form>
 </body>
@@ -31,30 +31,45 @@
         var email = data.get("email");
         var password = data.get("password");
 
+        // const response = fetch(`http://127.0.0.1:8080/login`,{
+        //     method: "POST",
+        //     headers: {
+        //         'Content-Type': 'application/json'
+        //     },
+
+        //     body: JSON.stringify({'email': email, 'password': email})
+        // });
+
         const response = await fetch(`${apiURL}/login`,{
-            method: "POST",
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                email: email,
-                password: password
-            })
+            body: JSON.stringify({ 'email' : email , 'password' : password})
         });
-
-
-        if (response.status == 422) {
-            alert("422 Unprocessable Entity");
+        
+        // if (response.status != 200) {
+        //     alert("Invalid credential");
+        //     console.log(response.status);
+        //     return;
+        // }
+        // incorrect password
+        if (response.status == 201) {
+            alert("Incorrect password");
+            data.get("password").value = "";
             return;
         }
-        if (response.status != 200) {
-            alert("Invalid credential");
+
+        if (response.status == 202){
+            alert("Email not found")
             return;
         }
         const responseData = await response.json();
+        console.log(responseData);
         const token = responseData.token;
         localStorage.setItem("token",token);
-        window.location.href = "/docs";
+        console.log("Token: " + token);
+        // window.location.href = "/";
     }
 
     loginForm.addEventListener("submit",processLoginForm);

@@ -10,10 +10,18 @@
 
 <body>
     <h1>DriveHub</h1>
-    <a href="/login.html">Login</a>
+    <a href="/login">Login</a>
     <br>
-    <a href="/register.html">Register</a>
+    <a href="/register">Register</a>
+    <button onclick="getToken()">Get Token</button>
 </body>
 
+<script>
+    function getToken() {
+        const data = document.createElement("h1");
+        data.innerHTML = "Token: " + localStorage.getItem("token");
+        document.body.appendChild(data);
+    }
+</script>
 
 </html>

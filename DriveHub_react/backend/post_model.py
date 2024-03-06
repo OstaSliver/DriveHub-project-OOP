@@ -3,7 +3,11 @@ from typing import List, Optional
 
 class RegisterModel(BaseModel):
     email: str
-    password: str
+    Name: str
+    Phone_Number: str
+    Password: str
+    Contact_info: str
+    Role: str
 
 class LoginModel(BaseModel):
     email: str
