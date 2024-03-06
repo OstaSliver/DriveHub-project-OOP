@@ -1,6 +1,8 @@
 from fastapi import FastAPI, Request , HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
+
+from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 from user import User
@@ -13,6 +15,18 @@ from post_model import *
 
 app = FastAPI()
 
+origins = [
+    "http://localhost:3000",
+    "localhost:3000"
+]
+
+app.add_middleware(
+        CORSMiddleware,
+        allow_origins=origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"]
+)
 templates = Jinja2Templates(directory="Frontend")
 
 website = WebsiteController()
@@ -28,19 +42,21 @@ def init():
 @app.get('/')
 def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
+    pass
 
 @app.get('/home')
 def home(request: Request):
     return {"status": "Login Successful"}
 
 
-# @app.get('/login.html')
-# def login(request: Request):
-#     return templates.TemplateResponse("login.html", {"request": request})
+@app.get('/login.html')
+def login(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})
 
 @app.get('/login')
 def login(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
+    pass
 
 @app.post('/login')
 # async def login(email: str, password: str):
@@ -65,12 +81,23 @@ def register(request: Request):
     return templates.TemplateResponse("register.html", {"request": request})
 
 @app.post('/register')
-async def register(request: Request, email: str, Name: str, Phone_Number: str, Password: str, Contact_info: str, Role: str):
-    if website.register(email, Name, Phone_Number, Password, Role) == "Registration Successful":
+async def register(register_data: RegisterModel):
+    email: str = register_data.email
+    Name: str = register_data.Name
+    Phone_Number: str = register_data.Phone_Number
+    Password: str = register_data.Password
+    Role: str = register_data.Role
+
+    log = website.register(email, Name, Phone_Number, Password, Role)
+    if log == "Registration Successful":
         return {"status": "Registration Successful"}
         
-    else:
-        raise HTTPException(status_code=400, detail="Registration Failed")
+    elif log == "User already exists":
+        raise HTTPException(status_code=401, detail="User already exists")
+    
+    elif log == "Invalid Role":
+        raise HTTPException(status_code=402, detail="Invalid Role")
+    
     return {"status": "Registration Successful"}
 
 @app.get('/User')
