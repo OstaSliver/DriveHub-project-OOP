@@ -2,6 +2,19 @@ from user import User,Customer,Lender
 from uuid import uuid4
 
 rand_token = uuid4()
+
+class Token:
+    def __init__(self,user,token):
+        self.__User: User = user
+        self.__token: str = token
+    @property
+    def token(self):
+        return self.__token
+    
+    @property
+    def user(self):
+        return self.__User
+    
 class WebsiteController:
     def __init__(self):
         # self.User_list = []
@@ -18,6 +31,7 @@ class WebsiteController:
         self.__lender_list = []
         self.__reservation_list = []
         self.__car_list = []
+        self.__Token_list = []
 
     @property
     def user_list(self):
@@ -35,28 +49,39 @@ class WebsiteController:
     def car_list(self):
         return self.__car_list
     
+    @property
+    def Token_list(self):   
+        return self.__Token_list
+    
     def register(self, email, Name, Phone_Number, Password, Role):
 
         for user in self.user_list:
-            if user.email == user.email:
+            if user.email == email:
                 return "User already exists"
             
         token = uuid4()
         # user = User(email, Name, Phone_Number, Password, Role,token)
         if (Role == "customer"):
-            customer = Customer(email, Name, Phone_Number, Password,token)
-            user = User(email, Name, Phone_Number, Password,token)
-            user.role = "customer"
 
+            customer = Customer(email, Name, Phone_Number, Password)
+            user = User(email, Name, Phone_Number, Password)
+            user.role = "customer"
+            token_data = Token(user,token)
             self.customer_list.append(customer);
+            self.Token_list.append(token_data)
+            self.user_list.append(user)
+
         elif (Role == "lender"):
-            lender = Lender(email, Name, Phone_Number, Password,token)
-            user = User(email, Name, Phone_Number, Password,token)
+
+            lender = Lender(email, Name, Phone_Number, Password)
+            user = User(email, Name, Phone_Number, Password)
             user.role = "lender"
 
+            token_data = Token(user,token)
+            self.Token_list.append(token_data)
             self.lender_list.append(lender)
+            self.user_list.append(user)
 
-        self.user_list.append(user)
         return "Registration Successful"
         
         pass
@@ -68,7 +93,19 @@ class WebsiteController:
                 return "Incorrect Password"
         return "Email not found"
 
+    def check_token(self,token) -> User:
+        
+        for token_data in self.Token_list:
+                
+        # return 1
+    
+    def check_user(self,email):
 
+        for token in self.__Token_list:
+            if token.user.email == email:
+                return token
+        return 1
+    
     def add_car(self):
         pass
 

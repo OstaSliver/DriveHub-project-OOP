@@ -12,12 +12,43 @@
     <h1>DriveHub</h1>
     <a href="/login">Login</a>
     <br>
-    <a href="/register">Register</a>
+    <!-- <a href="/register">Register</a> -->
     <button onclick="getToken()">Get Token</button>
+    <button onclick="localStorage.removeItem('token')">Remove Token</button>
 </body>
 
 <script>
-    function getToken() {
+
+const apiURL = "http://127.0.0.1:8000";
+
+if (localStorage.getItem('token')) {
+    GetWebPage();
+}
+async function GetWebPage() {
+    const token = localStorage.getItem('token');
+    try {
+        const response = await fetch(`${apiURL}/home`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 'token' : token})
+        });
+        if (response.ok) {
+            // ดำเนินการเมื่อ API เรียกสำเร็จ
+            const responseData = await response.json();
+            console.log(responseData); // ตัวอย่างการใช้ข้อมูลที่ได้รับ
+        } else {
+            // ดำเนินการเมื่อการเรียก API ไม่สำเร็จ
+            console.error('เกิดข้อผิดพลาดในการเรียก API');
+        }
+    } catch (error) {
+        // ดำเนินการเมื่อมีข้อผิดพลาดในการเรียก API
+        console.error('เกิดข้อผิดพลาดในการเรียก API:', error);
+    }
+}
+
+    async function getToken() {
         const data = document.createElement("h1");
         data.innerHTML = "Token: " + localStorage.getItem("token");
         document.body.appendChild(data);

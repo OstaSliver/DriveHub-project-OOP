@@ -9,14 +9,13 @@ class User:
     #     self.__Role = None
     #     self.__token = None
 
-    def __init__(self, email, name, phone_number, password,token):
+    def __init__(self, email, name, phone_number, password):
         self.__email = email
         self.__name = name
         self.__phone_number = phone_number
         self.__password = password
         self.__contact_info = None
         self.__role = None
-        self.__token = token
 
     @property
     def email(self):
@@ -45,8 +44,6 @@ class User:
         self.__role = role
     
     @property
-    def token(self):
-        return self.__token
     
     def create_customer(self):
         pass
@@ -64,28 +61,29 @@ class User:
         pass
 
 class Customer(User):
-    def __init__(self,id,name,phone_number,password,token):
-        super().__init__(id,name,phone_number,password,token)
+    def __init__(self,id,name,phone_number,password):
+        super().__init__(id,name,phone_number,password)
         self.__reservations = []
-    def view_reservations(self):
+    @property
+    def reservations(self):
         return self.__reservations
-    def add_reserves(self, reservation):
+    def add_reservation(self, reservation):
         self.reservations.append(reservation)
 
 class Lender(User):
-    def __init__(self,id,name,phone_number,password,token):
-        super().__init__(id,name,phone_number,password,token)
+    def __init__(self,id,name,phone_number,password):
+        super().__init__(id,name,phone_number,password)
         self.__lent_cars = []
     
-
     @property
     def lent_cars(self):
         return self.__lent_cars
     
-    def lend_car(self,status,license,locaation,price,site):
-        temp = Car(status,license,self,locaation,price)
+    def lend_car(self,status,license,location,price):
+        temp = Car(status,license,self,location,price)
         self.lent_cars.append(temp)
-        site.car_list.append(temp)
+        return temp
+
     def update_car_status(self,updated_status,car_instance):
         if (self == car_instance.owner):
             if updated_status == 0:
