@@ -7,6 +7,7 @@ class Token:
     def __init__(self,user,token):
         self.__User: User = user
         self.__token: str = token
+
     @property
     def token(self):
         return self.__token
@@ -31,7 +32,7 @@ class WebsiteController:
         self.__lender_list = []
         self.__reservation_list = []
         self.__car_list = []
-        self.__Token_list = []
+        self.__token_list = []
 
     @property
     def user_list(self):
@@ -50,8 +51,8 @@ class WebsiteController:
         return self.__car_list
     
     @property
-    def Token_list(self):   
-        return self.__Token_list
+    def token_list(self):   
+        return self.__token_list
     
     def register(self, email, Name, Phone_Number, Password, Role):
 
@@ -68,7 +69,7 @@ class WebsiteController:
             user.role = "customer"
             token_data = Token(user,token)
             self.customer_list.append(customer);
-            self.Token_list.append(token_data)
+            self.token_list.append(token_data)
             self.user_list.append(user)
 
         elif (Role == "lender"):
@@ -78,7 +79,7 @@ class WebsiteController:
             user.role = "lender"
 
             token_data = Token(user,token)
-            self.Token_list.append(token_data)
+            self.token_list.append(token_data)
             self.lender_list.append(lender)
             self.user_list.append(user)
 
@@ -94,14 +95,22 @@ class WebsiteController:
         return "Email not found"
 
     def check_token(self,token) -> User:
+        # log ={}
+        # log['tokenInput'] = token
+        # log['count'] = len(self.__token_list)
+        # log['tokenAll'] =[str(tokens.token) for tokens in self.token_list]
+        for tokens in self.token_list:
+            if str(tokens.token) == str(token):
+                # log['user'] = tokens.user
+                # return log
+                return tokens.user
+        # return {"status": "Token not found"}
+        # return log
         
-        for token_data in self.Token_list:
-                
-        # return 1
     
     def check_user(self,email):
 
-        for token in self.__Token_list:
+        for token in self.__token_list:
             if token.user.email == email:
                 return token
         return 1

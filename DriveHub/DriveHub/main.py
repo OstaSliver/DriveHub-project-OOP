@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request , HTTPException
+from fastapi import FastAPI, Request , HTTPException,Header,Response
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi import Form
@@ -48,15 +48,24 @@ def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
     pass
 
+@app.get('/home.html')
+def home(request: Request):
+    return templates.TemplateResponse("home.html", {"request": request})
+    
 @app.get('/home')
-def home(token: str):
-    # return {"token" : token}
-    return {"data": site.check_token(token)}
-    if site.check_token(token).role == "customer":
-        
-        return RedirectResponse(url=f"/customer/home?token={token}")
-    elif site.check_token(token).role == "lender":
-        return RedirectResponse(url=f"/lender/home?token={token}")
+def home(Request: Request, token: str = Header(None)):
+    header_token = Request.headers.get("token")
+    raise HTTPException(status_code=200, detail=header_token)
+    if header_token is None:
+        return {"status": "None"}
+    else:
+        temp = site.check_token(str(header_token))
+        if temp.role == "customer":
+            return RedirectResponse(url=f"/customer/home?token={token}")
+        elif temp.role == "lender":
+            return RedirectResponse(url=f"/lender/home?token={token}")
+
+
 
 
 @app.get('/login.html')
@@ -225,9 +234,11 @@ async def init_user():
     # return {site.user_list[0].email}
 
 if __name__ == "__main__":
+
     uvicorn.run(
         "main:app",
         host    = "127.0.0.1",
         port    = 8000, 
         reload  = True
     )
+    pass

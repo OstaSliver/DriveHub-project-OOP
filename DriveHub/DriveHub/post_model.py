@@ -14,7 +14,7 @@ class UserModel(BaseModel):
     password: str
     role: str
 
-class TestModel(BaseModel):
-    name: str
+class TokenModel(BaseModel):
+    token: str
 
     

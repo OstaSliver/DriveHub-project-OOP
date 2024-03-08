@@ -1,22 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>test</title>
+    <title>Display Home Page</title>
 </head>
+
 <body>
-    
+    <div id="content">
+        <!-- ส่วนนี้จะถูกแสดงผลลัพธ์จาก API -->
+    </div>
+    <script>
+        window.onload = function () {
+            const apiURL = "http://127.0.0.1:8000";
+
+            if (localStorage.getItem('token')) {
+                GetHomePage();
+            }
+            
+            async function GetHomePage() {
+                const token = localStorage.getItem('token');
+                console.log(`Token: ${token}`);
+                try {
+                    const response = await fetch(`${apiURL}/home`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    if (response.ok) {
+                        const htmlData = await response.text();
+                        document.getElementById('content').innerHTML = htmlData;
+                    } else {
+                        console.error('Failed to fetch home page data');
+                    }
+                } catch (error) {
+                    console.error('Error fetching home page data:', error);
+                }
+            }
+        }
+    </script>
 </body>
-<script>
-    // document.addEventListener('DOMContentLoaded', function() {
-    //     const token = localStorage.getItem('token');
-    //     if (token) {
-    //         fetch('http://
-    //         console.log('Token:', token);
-    //     } else {
-    //         console.log('No token found');
-    //     }
-    // });
-</script>
+
 </html>
