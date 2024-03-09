@@ -9,7 +9,8 @@
 
 <body>
     <div id="content">
-        <!-- ส่วนนี้จะถูกแสดงผลลัพธ์จาก API -->
+        <h1>Home Page</h1>
+        <p>Welcome to DriveHub</p>
     </div>
     <script>
         window.onload = function () {
@@ -24,14 +25,22 @@
                 console.log(`Token: ${token}`);
                 try {
                     const response = await fetch(`${apiURL}/home`, {
-                        method: 'GET',
+                        method: 'POST',
                         headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ 'token': token })
+
                     });
+                    if(response.status === 401) {
+                            window.location.href = '/login';
+                    }
                     if (response.ok) {
+                        // console.log('Home page data fetched successfully');
                         const htmlData = await response.text();
-                        document.getElementById('content').innerHTML = htmlData;
+                        console.log(htmlData);
+                        // document.getElementById('content').innerHTML = htmlData;
+                        document.write(htmlData);
                     } else {
                         console.error('Failed to fetch home page data');
                     }

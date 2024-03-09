@@ -33,6 +33,9 @@ templates = Jinja2Templates(directory="Frontend")
 
 site = WebsiteController()
 
+site.register("oat@","oat","0967459032","1234","customer")
+site.register("tee@","tee","0967459032","1234","lender")
+
 def init():
     site.register("oat@","oat","0967459032","1234","customer")
     site.register("tee@","tee","0967459032","1234","lender")
@@ -48,29 +51,55 @@ def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
     pass
 
-@app.get('/home.html')
+@app.get('/home')
 def home(request: Request):
     return templates.TemplateResponse("home.html", {"request": request})
-    
-@app.get('/home')
-def home(Request: Request, token: str = Header(None)):
-    header_token = Request.headers.get("token")
-    raise HTTPException(status_code=200, detail=header_token)
-    if header_token is None:
-        return {"status": "None"}
-    else:
-        temp = site.check_token(str(header_token))
+
+@app.post('/home')
+async def home(request : Request,token:TokenModel):
+    token_input = token.token
+    temp = site.check_token(str(token_input))
+    try :
         if temp.role == "customer":
-            return RedirectResponse(url=f"/customer/home?token={token}")
+            return templates.TemplateResponse("customer_home.html", {"request": request, "token": token_input})
+            # return RedirectResponse(url=f"/customer/home")
         elif temp.role == "lender":
-            return RedirectResponse(url=f"/lender/home?token={token}")
+            return templates.TemplateResponse("lender_home.html", {"request": request, "token": token_input})
+            # return RedirectResponse(url=f"/lender/home")
+    except:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+        # return {"token": token_input,"check": temp}
+# @app.get('/home.html')
+# def home(token: str = Header(...)):
+    
+#     header_token = token
+#     try :
+#         temp = site.check_token(str(header_token))
+#         if temp.role == "customer":
+#             return RedirectResponse(url=f"/customer/home?token={header_token}")
+#         elif temp.role == "lender":
+#             return RedirectResponse(url=f"/lender/home?token={header_token}")
+#     except:
+#         return {"status": "None"}
+    
+    # return {"token": header_token}
+    # return templates.TemplateResponse("home.html", {"request": Request, "token": header_token})
+    # if header_token is None:
+    #     return {"status": "None"}
+    # else:
+    #     temp = site.check_token(str(header_token))
+    #     if temp.role == "customer":
+    #         return RedirectResponse(url=f"/customer/home?token={token}")
+    #     elif temp.role == "lender":
+    #         return RedirectResponse(url=f"/lender/home?token={token}")
+    # return RedirectResponse(url=f"/customer/home?token={header_token}")
 
 
 
 
-@app.get('/login.html')
-def login(request: Request):
-    return templates.TemplateResponse("login.html", {"request": request})
+# @app.get('/login.html')
+# def login(request: Request):
+#     return templates.TemplateResponse("login.html", {"request": request})
 
 @app.get('/login')
 def login(request: Request):
@@ -127,7 +156,7 @@ def get_all_lender():
 def customer_home_page(request: Request, token: str):
     return templates.TemplateResponse("customer_home.html", {"request": request, "token": token})
 
-@app.get("/customer/{customer_id}/reservations", tags=["Customer"])
+@app.post("/reservations", tags=["Customer"])
 def get_all_reservations_page(customer_id:int) -> dict:
     for customers in site.customer_list:
         if customers.id == customer_id:
@@ -169,9 +198,9 @@ async def make_reservation_post(request: Request, customer_id:int = Form(...), l
 def lender_home_page(request: Request, token:str):
     return templates.TemplateResponse("lender_home.html", {"request": request, "token": token})
 
-@app.get('/lender/{lender_id}/update_car', tags =["Lender"])
-def update_car_page(request: Request, lender_id:int):
-    return templates.TemplateResponse("update_car.html", {"request": request, "lender_id": lender_id})
+@app.get('/update_car', tags =["Lender"])
+def update_car_page(request: Request):
+    return templates.TemplateResponse("update_car.html", {"request": request})
 
 @app.get("/lender/{lender_id}/add_car", tags =["Lender"])
 def add_car_page(request:Request, lender_id:int):
@@ -221,24 +250,22 @@ async def update_car_post(request: Request, lender_id: int = Form(...), new_stat
     return{"Not Successful"}
 
 @app.get('/User')
-async def get_user(Token: str):
+async def get_user():
     data = []
     for user in site.user_list:
         data.append({"email": user.email, "Name": user.name, "Phone_Number": user.phone_number, "Password": user.password, "Contact_info": user.contact_info, "Role": user.role , "Token": site.check_user(user.email).token})
     return data
 
-@app.get('/init')
-async def init_user():
-    init()
-    return {"status": "Init Successful"}
-    # return {site.user_list[0].email}
+# @app.get('/init')
+# async def init_user():
+#     init()
+#     return {"status": "Init Successful"}
+#     # return {site.user_list[0].email}
 
 if __name__ == "__main__":
-
     uvicorn.run(
         "main:app",
         host    = "127.0.0.1",
         port    = 8000, 
         reload  = True
     )
-    pass

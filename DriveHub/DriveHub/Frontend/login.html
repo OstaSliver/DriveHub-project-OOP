@@ -19,6 +19,12 @@
     </form>
 </body>
 <script>
+    
+    if (window.location.href !== 'http://127.0.0.1:8000/login'){
+        window.location.href = '/login';
+        // console.log("Login page");
+    }
+
     const apiURL = "http://127.0.0.1:8000";
 
     const loginForm = document.getElementById("login-form")
@@ -45,9 +51,9 @@
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ 'email' : email , 'password' : password})
+            body: JSON.stringify({ 'email': email,'password': password })
         });
-        
+
         // if (response.status != 200) {
         //     alert("Invalid credential");
         //     console.log(response.status);
@@ -60,7 +66,7 @@
             return;
         }
 
-        if (response.status == 202){
+        if (response.status == 202) {
             alert("Email not found")
             return;
         }
@@ -69,7 +75,7 @@
         const token = responseData.token;
         localStorage.setItem("token",token);
         console.log("Token: " + token);
-        window.location.href = "/home.html";
+        window.location.href = "/home";
         // window.location.href = "/";
     }
 
