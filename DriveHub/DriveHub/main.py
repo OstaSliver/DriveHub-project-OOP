@@ -156,6 +156,10 @@ def get_all_lender():
 def customer_home_page(request: Request, token: str):
     return templates.TemplateResponse("customer_home.html", {"request": request, "token": token})
 
+@app.get("/reservations", tags=["Customer"])
+def get_all_reservations_page(request: Request):
+    return templates.TemplateResponse("reservations.html", {"request": request})
+
 @app.post("/reservations", tags=["Customer"])
 def get_all_reservations_page(customer_id:int) -> dict:
     for customers in site.customer_list:

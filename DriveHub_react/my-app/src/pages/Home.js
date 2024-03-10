@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 
-
 function Home() {
     const bgImgUrl = 'https://img.goodfon.com/original/1921x1081/f/ca/doroga-car-mashina-osen-les-peizazh-noch-colorful-dark-for-1.jpg';
 
@@ -139,27 +138,31 @@ const TabsForRent = () => {
 
 const HowGood = () => {
     return (
-        <div className="container mx-auto bg-white" style={{maxWidth: "1920px", width: "100%", height: "60vh", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
+        <div className="container mt-72 pt-72 pb-72 mx-auto bg-slate-200 w-100" style={{maxWidth: "1920px", width: "100%", height: "60vh", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
             <div style={{maxWidth: "1920px", width: "100%", height: "10vh"}}></div>
             <h3 className="text-3xl font-bold text-black mx-10 mb-4">เช่ารถกับไดร์ฟฮับ</h3>
             <p className="text-xl font-bold text-gray-500 mx-10 mb-8">เช่ารถกับเราดียังไง</p>
-            <div className="flex justify-between w-full max-w-4xl">
+            <div className="flex justify-between align-middle w-full max-w-4xl flex-row">
                 <div className="w-1/4 mx-4  p-4  text-center">
-                <h4 className='text-xl font-bold'>ยกเลิกฟรี</h4>
+                <img src="https://th.bing.com/th/id/OIP.FVXAzWvVEb9t9fhn5Op5_wAAAA?rs=1&pid=ImgDetMain" width="200" height="200" className='mb-5' /> 
+                <h4 className='text-xl font-bold text-center'>ยกเลิกฟรี</h4>
                <p >แจ้งภายใน 72 ชั่วโมง</p>
                 </div>
            
                 <div className="w-1/4 mx-4  p-4 ">
-                <h4 className='text-xl font-bold'>ไม่มีบัตรเครดิตก็เช่าได้</h4>
-               <p className='text-left'>แค่ใช้เอกสารยืนยันเท่านั้น</p>
+                <img src="https://th.bing.com/th/id/OIP.FVXAzWvVEb9t9fhn5Op5_wAAAA?rs=1&pid=ImgDetMain" width="200" height="200" className='mb-5'/> 
+                <h4 className='text-xl font-bold text-center'>ไม่มีบัตรเครดิตก็เช่าได้</h4>
+               <p className='text-center'>แค่ใช้เอกสารยืนยันเท่านั้น</p>
                 </div>
                 <div className="w-1/4 mx-4  p-4  text-center">
-                <h4 className='text-xl font-bold'>เจ้าหน้าที่ดูแล</h4>
-               <p className='text-left'>มีเจ้าหน้าที่ดูแลตลอดการเช่า</p>
+                <img src="https://th.bing.com/th/id/OIP.FVXAzWvVEb9t9fhn5Op5_wAAAA?rs=1&pid=ImgDetMain" width="200" height="200" className='mb-5'/> 
+                <h4 className='text-xl font-bold text-center'>เจ้าหน้าที่ดูแล</h4>
+               <p className='text-center'>มีเจ้าหน้าที่ดูแลตลอดการเช่า</p>
                 </div>
                 <div className="w-1/4 mx-4  p-4  text-center">
-                <h4 className='text-xl font-bold'>เปรียบเทียบราคา</h4>
-               <p className='text-left'>เทียบราคารถเช่าทุกบริษัทได้ทันที</p>
+                <img src="https://th.bing.com/th/id/OIP.FVXAzWvVEb9t9fhn5Op5_wAAAA?rs=1&pid=ImgDetMain" width="200" height="200" className='mb-5'/> 
+                <h4 className='text-xl font-bold text-center'>เปรียบเทียบราคา</h4>
+               <p className='text-center'>เทียบราคารถเช่าทุกบริษัทได้ทันที</p>
                 </div>
             </div>
         </div>

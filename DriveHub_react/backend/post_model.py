@@ -2,12 +2,13 @@ from pydantic import BaseModel
 from typing import List, Optional
 
 class RegisterModel(BaseModel):
+
+    name: str
+    phone_Number: str
     email: str
-    Name: str
-    Phone_Number: str
-    Password: str
-    Contact_info: str
-    Role: str
+    role: str
+    password: str
+    
 
 class LoginModel(BaseModel):
     email: str
@@ -18,7 +19,8 @@ class UserModel(BaseModel):
     password: str
     role: str
 
-class TestModel(BaseModel):
-    name: str
+
+class TokenModel(BaseModel):
+    token: str
 
     

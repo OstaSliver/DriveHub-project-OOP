@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState , useContext , useEffect} from 'react';
 import { Link } from "react-router-dom";
 import Navbar from '../components/Navbar';
-
+import { useAuth  } from '../provider/AuthContext';
+import { useNavigate } from 'react-router-dom';
 function Login() {
-  const bgImgUrl = 'https://img.goodfon.com/original/1920x1080/c/8b/car-space-planet-blue-black.jpg?d=1';
+  const navigate = useNavigate();
+const { setAuth , setRole} = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -15,42 +18,27 @@ function Login() {
     setPassword(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // You can add your authentication logic here
-    const data = {
-      email: `${email}`,
-      password: `${password}`,
-    };
 
-    const fetchData = async () => {
-      const response = await fetch("http://localhost:8000/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      // if (response.status == 401) {
-      //   console.log("Email already exists");
-      //   alert("Email already exists");
-      // }
+    // Implement authentication logic (e.g., API call)
+    const isLoginSuccessful = true; // Simulate successful login
 
-      if (response.status == 200) {
-        console.log("Registered Successfully");
-        alert("Registered Successfully");
-        window.location.href = "/Home";
-      }
-    };
-
-    fetchData();
-
-    console.log('Email:', email);
-    console.log('Password:', password);
+    if (isLoginSuccessful) {
+      setRole('lender')
+      setAuth(true);
+      navigate('/');
+    } else {
+      console.error('Login failed:'); // Log error message
+      // Handle failed login scenario (e.g., display error message)
+    }
   };
 
   return (
     <div 
     style={{
-      backgroundImage: `url(${bgImgUrl})`,
+      backgroundColor: 'whitesmoke',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
@@ -59,7 +47,7 @@ function Login() {
   }}>
 
       <Navbar />
-      <div className="min-h-screen bg-cover bg-center" style={{ backgroundImage: `url(${bgImgUrl})` }}>
+      
         <div className='containerbg-transparent  w-full py-10'></div>
         <div className="flex justify-center items-center">
           <div className="max-w-md w-full p-8 bg-white bg-opacity-90 shadow-lg rounded-md ">
@@ -91,14 +79,14 @@ function Login() {
                 
                 <Link to="/register" className="text-blue-500 hover:text-violet-600">Don't have an account? Register Here</Link>
               </div>
-              <button type="submit" className="w-full bg-indigo-500 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:bg-indigo-600 bg-gradient-to-r from-blue-500 to-pink-500">
+              <button  type="submit" className="w-full bg-indigo-500 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:bg-indigo-600 bg-gradient-to-r from-blue-500 to-pink-500">
                 Log In
               </button>
             </form>
           </div>
         </div>
       </div>
-    </div>
+    
   );
 }
 

@@ -1,5 +1,3 @@
-import datetime
-from datetime import date
 from DMY import DMY
 class Car:
     def __init__(self,status,license,owner,location,price):
