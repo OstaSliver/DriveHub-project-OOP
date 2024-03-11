@@ -33,14 +33,9 @@ templates = Jinja2Templates(directory="Frontend")
 
 site = WebsiteController()
 
-site.register("oat@","oat","0967459032","1234","customer")
-site.register("tee@","tee","0967459032","1234","lender")
+site.register("oat@a","oat","0967459032","1234","customer")
+site.register("tee@a","tee","0967459032","1234","lender")
 
-def init():
-    site.register("oat@","oat","0967459032","1234","customer")
-    site.register("tee@","tee","0967459032","1234","lender")
-
-    # print(website.User_list[0].email)
 
 
 # app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -48,7 +43,7 @@ def init():
 
 @app.get('/')
 def index(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    # return templates.TemplateResponse("index.html", {"request": request})
     pass
 
 @app.get('/home')
@@ -101,10 +96,10 @@ async def home(request : Request,token:TokenModel):
 # def login(request: Request):
 #     return templates.TemplateResponse("login.html", {"request": request})
 
-@app.get('/login')
-def login(request: Request):
-    return templates.TemplateResponse("login.html", {"request": request})
-    pass
+# @app.get('/login')
+# def login(request: Request):
+#     return templates.TemplateResponse("login.html", {"request": request})
+#     pass
 
 @app.post('/login')
 # async def login(email: str, password: str):
@@ -112,13 +107,11 @@ async def login(login_data: LoginModel):
     email: str = login_data.email
     password: str = login_data.password
     log = site.login(email, password)
-    if log == "Login Successful":
-        return {"status": "Login Successful","Token": "a"}
-    elif log == "Incorrect Password":
+    if log == "Incorrect Password":
         raise HTTPException(status_code=201, detail="Incorrect Password")
     elif log == "Email not found":
         raise HTTPException(status_code=202, detail="Email not found")
-    return {"status": "Login Successful","token": site.check_user(email).token}
+    return {"status": "Login Successful","token": site.check_user(email).token, "role": site.check_user(email).user.role}
 
 @app.get('/register')
 def register(request: Request):
@@ -127,14 +120,14 @@ def register(request: Request):
 @app.post('/register')
 async def register(register_data: RegisterModel):
     email: str = register_data.email
-    Name: str = register_data.Name
-    Phone_Number: str = register_data.Phone_Number
-    Password: str = register_data.Password
-    Role: str = register_data.Role
+    name: str = register_data.name
+    phone_Number: str = register_data.phone_Number
+    password: str = register_data.password
+    role: str = register_data.role
 
-    log = site.register(email, Name, Phone_Number, Password, Role)
+    log = site.register(email, name, phone_Number, password, role)
     if log == "Registration Successful":
-        return {"status": "Registration Successful"}
+        return {"status": "Registration Successful","token": site.check_user(email).token}
         
     elif log == "User already exists":
         raise HTTPException(status_code=401, detail="User already exists")
@@ -253,12 +246,19 @@ async def update_car_post(request: Request, lender_id: int = Form(...), new_stat
                     return {"Car Status Changed to":Cars.status}
     return{"Not Successful"}
 
-@app.get('/User')
-async def get_user():
+@app.get("/user", tags=["API"])
+async def get_all_user():
     data = []
     for user in site.user_list:
         data.append({"email": user.email, "Name": user.name, "Phone_Number": user.phone_number, "Password": user.password, "Contact_info": user.contact_info, "Role": user.role , "Token": site.check_user(user.email).token})
     return data
+
+@app.post("/get_user_token", tags=["API"])
+async def get_user(request: Request, token:TokenModel):
+    token_input:str = token.token
+    # return {token: token_input}
+    temp = site.check_token(str(token_input))
+    return {"name":temp.name ,"plone_number":temp.phone_number,"role": temp.role}
 
 # @app.get('/init')
 # async def init_user():

@@ -14,18 +14,27 @@ function Register() {
         e.preventDefault();
         
         // Check if passwords match
+
+        if (name === "" || phone_number === "" || email === "" || role === "" || password === "" || confirmPassword === "") {
+            console.log("All fields are required");
+            alert("All fields are required");
+            return;
+        }
+
         if (password !== confirmPassword) {
             console.log("Passwords do not match");
+            alert("Passwords do not match");
             return;
         }
 
         const data = {
-            email: `${email}`,
             name: `${name}`,
-            phone_Number: {phone_number},
-            password: `${password}`,
-            // contact_info: "Contact_info",
+            phone_Number:`${phone_number}`,
+            email: `${email}`,
             role: `${role}`,
+            password: `${password}`
+            // contact_info: "Contact_info",
+            
           };
 
         try {
@@ -37,11 +46,33 @@ function Register() {
                 body: JSON.stringify(data),
             });
 
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+            // if (!response.ok) {
+            //     throw new Error('Network response was not ok');
+            // }
+
+            if(response.status === 401){
+                console.log('User already exists');
+                alert('User already exists');
+                navigator('/login');
+            }
+            if(response.status === 402){
+                console.log('invalid input');
+                console.log(data)
+                alert('invalid input');
+            }
+            else if(response.status === 201){
+                console.log('User registered successfully');
+                alert('User registered successfully');
+                localStorage.setItem('token', response.token);
+                navigator('/login');
             }
 
+
             console.log('User registered successfully');
+            
+            const responseData = await response.json();
+            localStorage.setItem('token', responseData.token);
+            
             
             // Optionally, you can handle the successful registration here, such as displaying a success message or redirecting to another page.
         } catch (error) {
@@ -149,6 +180,7 @@ function Register() {
                             value={role}
                             onChange={(e) => setRole(e.target.value)}
                         >
+                            <option>Select Role</option>
                             <option>customer</option>
                             <option>lender</option>
                         </select>

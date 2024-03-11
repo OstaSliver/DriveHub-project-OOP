@@ -12,7 +12,7 @@ function Home() {
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat',
                 minHeight: '100vh',
-                opacity: 1, // Adjust the opacity value (0.5) for the desired opacity
+                opacity: 1, 
             }}
         >
 

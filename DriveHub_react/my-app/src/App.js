@@ -7,6 +7,7 @@ import Register from "./pages/Register";
 import NoPage from "./pages/Nopage";
 import AddCar from "./pages/AddCar";
 import LenderHome from "./pages/LenderHome";
+import Profile from "./pages/profile";
 import { useAuth} from "./provider/AuthContext"; 
 
 export default function App() {
@@ -18,6 +19,7 @@ export default function App() {
       {role === "lender" ? (
           <Route path="" element={<LenderHome />} />
         ) : <Route path="" element={<Home />} />}
+        <Route path="profile" element={<Profile />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route path="addcar" element={<AddCar />} />

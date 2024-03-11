@@ -7,10 +7,13 @@ const AuthContext = createContext({
   role: "customer",
   setRole: () => {},
 });
+
 const useAuth = () => useContext(AuthContext);
 const AuthProvider = ({ children }) => {
+  
   const [auth, setAuth] = useState(false);
   const [role, setRole] = useState("customer");
+
   const handleLogout = () => {
     setRole('customer')
     setAuth(false);

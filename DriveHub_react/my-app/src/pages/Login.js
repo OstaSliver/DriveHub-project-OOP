@@ -22,18 +22,40 @@ const { setAuth , setRole} = useAuth();
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Implement authentication logic (e.g., API call)
-    const isLoginSuccessful = true; // Simulate successful login
-
-    if (isLoginSuccessful) {
-      setRole('lender')
-      setAuth(true);
-      navigate('/');
-    } else {
-      console.error('Login failed:'); // Log error message
-      // Handle failed login scenario (e.g., display error message)
-    }
-  };
+    try {
+      const response = await fetch('http://127.0.0.1:8000/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await response.json();
+      console.log(data);
+      if(response.status === 201){
+        console.log('Incorrect password');
+        alert('Incorrect password');
+        return;
+      }
+      if(response.status === 202){
+        console.log('email not found');
+        alert('email not found');
+        return;
+      }
+      if(response.status === 200){
+        console.log('Login successful');
+        // console.log(data);
+        alert('Login successful');
+        setAuth(true);
+        setRole(data.role);
+        navigate('/');
+        localStorage.setItem('token', data.token);
+      }
+  } catch (error) {
+    console.error('Login failed:', error); // Log error message
+    // Handle failed login scenario (e.g., display error message)
+  }
+  }
 
   return (
     <div 
