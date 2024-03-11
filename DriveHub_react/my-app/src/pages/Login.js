@@ -50,6 +50,7 @@ const { setAuth , setRole} = useAuth();
         setRole(data.role);
         navigate('/');
         localStorage.setItem('token', data.token);
+        localStorage.setItem('role', data.role);
       }
   } catch (error) {
     console.error('Login failed:', error); // Log error message

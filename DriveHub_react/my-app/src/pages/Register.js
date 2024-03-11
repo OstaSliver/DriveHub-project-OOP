@@ -60,20 +60,14 @@ function Register() {
                 console.log(data)
                 alert('invalid input');
             }
-            else if(response.status === 201){
+            else if(response.status === 200){
                 console.log('User registered successfully');
                 alert('User registered successfully');
-                localStorage.setItem('token', response.token);
-                navigator('/login');
-            }
-
-
-            console.log('User registered successfully');
-            
-            const responseData = await response.json();
-            localStorage.setItem('token', responseData.token);
-            
-            
+                const responseData = await response.json();
+                localStorage.setItem('token', responseData.token);
+                localStorage.setItem('role', responseData.role);
+                navigator('/');
+            }            
             // Optionally, you can handle the successful registration here, such as displaying a success message or redirecting to another page.
         } catch (error) {
             console.error('There was an error registering the user:', error);

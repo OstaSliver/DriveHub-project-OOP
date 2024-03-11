@@ -38,7 +38,7 @@ function LenderHome() {
             <div>
                 <Navbar />
                 <div style={{ marginLeft: '25%', marginTop: '7%' }}>
-                    <h1 className='text-6xl text-bold bg-gradient-to-r from-sky-500 via-30% to-emerald-500 to-90% inline-block text-transparent bg-clip-text'>สวัสดี,{name_user}</h1>
+                    <h1 className='text-6xl text-bold bg-gradient-to-r from-sky-500 via-30% to-emerald-500 to-90% inline-block text-transparent bg-clip-text'>สวัสดี, {name_user}</h1>
                 </div>
                 <YourCarsSection />
             </div>

@@ -1,7 +1,21 @@
 import Navbar from '../components/Navbar';
 import { Link } from "react-router-dom";
+import { useAuth } from "../provider/AuthContext";
+
 
 function AddCar() {
+
+    const { role, } = useAuth();
+
+    if (role === "customer") {
+        return (
+            <div>
+                <h1>Permission Denied</h1>
+                <p>You do not have permission to access this page</p>
+                <Link to="/">Back to Homepage</Link>
+            </div>
+        );
+    }
     return (
         <div
             style={{

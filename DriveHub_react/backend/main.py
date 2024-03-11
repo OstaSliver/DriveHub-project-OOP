@@ -258,6 +258,8 @@ async def get_user(request: Request, token:TokenModel):
     token_input:str = token.token
     # return {token: token_input}
     temp = site.check_token(str(token_input))
+    if temp is None:
+        return {"status": "Token not found"}
     return {"name":temp.name ,"plone_number":temp.phone_number,"role": temp.role}
 
 # @app.get('/init')

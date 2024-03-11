@@ -16,7 +16,7 @@ const Navbar = () => {
 
   const [name, setName] = useState('');
   const [role, setRole] = useState('');
-  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -189,7 +189,7 @@ const Navbar = () => {
                           <Link to="/profile" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">โปรไฟล์</Link>
                         </li>
                         <li>
-                          <Link to="/logout" onClick={handleLogout} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">ออกจากระบบ</Link>
+                          <Link to="/" onClick={handleLogout} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">ออกจากระบบ</Link>
                         </li>
                       </>
                     )}
@@ -202,7 +202,7 @@ const Navbar = () => {
                           <Link to="/profile" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">โปรไฟล์</Link>
                         </li>
                         <li>
-                          <Link to="/logout" onClick={handleLogout} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">ออกจากระบบ</Link>
+                          <Link to="/" onClick={handleLogout} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">ออกจากระบบ</Link>
                         </li>
                       </>
                       )}
