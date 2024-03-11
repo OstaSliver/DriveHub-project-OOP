@@ -1,13 +1,5 @@
 from car import Car
 class User:
-    # def __init__(self, email, Name, Phone_Number, Password, Contact_info, Role):
-    #     self.__email = email
-    #     self.__Name = Name
-    #     self.__Phone_Number = Phone_Number
-    #     self.__Password = Password
-    #     self.__Contact_info = Contact_info
-    #     self.__Role = None
-    #     self.__token = None
 
     def __init__(self, email, name, phone_number, password):
         self.__email = email
@@ -64,25 +56,27 @@ class Customer(User):
     def __init__(self,id,name,phone_number,password):
         super().__init__(id,name,phone_number,password)
         self.__reservations = []
+
     @property
     def reservations(self):
         return self.__reservations
+    
     def add_reservation(self, reservation):
         self.reservations.append(reservation)
 
 class Lender(User):
     def __init__(self,id,name,phone_number,password):
         super().__init__(id,name,phone_number,password)
+
         self.__lent_cars = []
     
     @property
     def lent_cars(self):
         return self.__lent_cars
     
-    def lend_car(self,status,license,location,price):
-        temp = Car(status,license,self,location,price)
-        self.lent_cars.append(temp)
-        return temp
+    def lend_car(self,car_obj):
+        # temp = Car(status,license,self,location,price)
+        self.lent_cars.append(car_obj)
 
     def update_car_status(self,updated_status,car_instance):
         if (self == car_instance.owner):

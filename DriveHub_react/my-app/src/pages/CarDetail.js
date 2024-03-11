@@ -3,15 +3,14 @@ import Navbar from '../components/Navbar';
 import RatingForm from '../components/review';
 
 const InformationPage = () => {
-    // Sample data
+
     const carInfo = {
         imageUrl: 'https://car-images.bauersecure.com/wp-images/3695/maserati-mc20-lead.jpg',
         name: 'Maserati MC20',
         model: '2022',
-        price: '$200,000',
-        owner: 'John Doe',
+        price: '฿990',
+        owner: 'Sorrasak Limthong',
         review: '4.7 ',
-        // Add more car details here
         seats: '5',
         fuelSystem: 'Gasoline',
         doors: '4',
@@ -21,7 +20,7 @@ const InformationPage = () => {
     };
 
     const handleReservation = () => {
-        // Logic for handling reservation
+      
     };
 
     return (
@@ -29,53 +28,53 @@ const InformationPage = () => {
             <Navbar />
             <div className="container mx-auto py-8">
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <h1 className="text-2xl font-bold">{carInfo.name}</h1>
-                    <p className="text-gray-500 mb-5">{`รุ่น: ${carInfo.model}`}</p>
-                    <img className=" rounded-lg scale-75" style={{marginRight:'10%', marginLeft:'10%'}} src={carInfo.imageUrl} alt="Car" />
+                    <h1 className="text-6xl font-bold">{carInfo.name}</h1>
+                    <p className="text-gray-500 mb-5 text-2xl">{`รุ่น: ${carInfo.model}`}</p>
+                    <img className=" rounded-lg scale-100" style={{marginRight:'10%', marginLeft:'10%', width:'75%'}} src={carInfo.imageUrl} alt="Car" />
                 </div>
 
-                <div className="container mx-auto mt-8 ">
-                    <div className="grid grid-cols-3 gap-4 text-left">
+                <div className="container mx-auto mt-10 ml-40 ">
+                    <div className="w-1/6 flex text-left">
                         <div>
 
-                            <div className='pl-20 ' >
+                            <div className='pl-20' >
 
-                                <p className='text-gray-500 text-sm' >{`ประเภทรถ: `}</p>
-                                <p>{`${carInfo.model}`}</p>
+                                <p className='text-gray-500 text-ml' >{`ประเภทรถ: `}</p>
+                                <p className='text-2xl mb-7'>{`${carInfo.model}`}</p>
                                 <div style={{marginBottom:'10%'}}></div>
-                                <p className='text-gray-500 text-sm'>จำนวนที่นั่ง:</p>
-                                <p>{`${carInfo.seats}`}</p>
+                                <p className='text-gray-500 text-ml'>จำนวนที่นั่ง:</p>
+                                <p className='text-2xl mb-7'>{`${carInfo.seats}`}</p>
                                 <div style={{marginBottom:'10%'}}></div>
-                                <p className='text-gray-500 text-sm'>{`ระบบเชื้อเพลิง:`}</p>
-                                <p>{`${carInfo.fuelSystem}`}</p>
+                                <p className='text-gray-500 text-ml'>{`ระบบเชื้อเพลิง:`}</p>
+                                <p className='text-2xl mb-7'>{`${carInfo.fuelSystem}`}</p>
                                 <div style={{marginBottom:'10%'}}></div>
-                                <p className='text-gray-500 text-sm'>{`จำนวนประตู:`}</p>
-                                <p>{`${carInfo.doors}`}</p>
+                                <p className='text-gray-500 text-ml'>{`จำนวนประตู:`}</p>
+                                <p className='text-2xl'>{`${carInfo.doors}`}</p>
                             </div>
                     </div>
 
-                    <div> 
-                            <p className='text-gray-500 text-sm'>{`ระบบเกียร์: `}</p>
-                            <p >{`${carInfo.transmission}`}</p>
+                    <div className="w-3/6  ml-40  text-left"> 
+                            <p className='text-gray-500 text-ml '>{`ระบบเกียร์: `}</p>
+                            <p className='text-2xl mb-7'>{`${carInfo.transmission}`}</p>
                             <div style={{marginBottom:'10%'}}></div>
-                            <p className='text-gray-500 text-sm'>{`ประเภทเบาะ: `}</p>
-                            <p>{`${carInfo.seatType}`}</p>
+                            <p className='text-gray-500 text-ml'>{`ประเภทเบาะ: `}</p>
+                            <p className='text-2xl mb-7'>{`${carInfo.seatType}`}</p>
                             <div style={{marginBottom:'10%'}}></div>
-                            <p className='text-gray-500 text-sm'>{`ความจุเครื่องยนต์: `}</p>
-                            <p>{`${carInfo.engineCapacity}`}</p>
+                            <p className='text-gray-500 text-ml'>{`ความจุเครื่องยนต์: `}</p>
+                            <p className='text-2xl mb-7'>{`${carInfo.engineCapacity}`}</p>
                         </div>
-                    <div>
-                        
-                        <h2 className="text-lg font-bold mb-2">Reservation</h2>
+                    <div className='' style={{paddingLeft:'38rem'}}>
+                    <p className="text-gray-500 mt-40  text-red-600 text-6xl mb-5">{` ${carInfo.price}`}</p>
+
+            
                         <button
                             onClick={handleReservation}
-                            className="px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 focus:outline-none"
+                            className="px-4 py-2 pl-12 pr-12 text-white rounded-full bg-gradient-to-r from-blue-500 to-pink-400 hover:scale-125 focus:outline-none"
                         >
-                            Reserve Now
+                            เช่าเลย !
                         </button>
-                        <h2 className="text-lg font-bold mb-2">Price</h2>
-                        <p className="text-gray-500 ">{`Price: ${carInfo.price}`}</p>
-
+    
+                        
                     </div>
                 </div>
             </div>
@@ -87,7 +86,7 @@ const InformationPage = () => {
                     </div>
                     
                 </div>
-                <p className='text-3xl mt-8 ml-10'>&#11088;{` ${carInfo.review}`}</p>
+                 {/* <p className='text-5xl mt-8 ml-10' style={{marginLeft:'48%'}}>&#11088;{` ${carInfo.review}`}</p>  */}
 
                 <RatingForm/>
                 

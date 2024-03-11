@@ -17,12 +17,21 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+      <Route path="/home" element={<Home />} />
+
       {role === "lender" ? (
           <Route path="" element={<LenderHome />} />
         ) : <Route path="" element={<Home />} />}
+
         <Route path="login" element={<Login />} />
-        <Route path="register" element={<Register />} />
+        <Route path="register" element={<Register />} />]t
+
+      {/* {role === "lender" ? (
+          <Route path="addcar" element={<AddCar />} />
+        ) : <Route path="addcar" element={<Home/>} />} */}
+
         <Route path="addcar" element={<AddCar />} />
+
         <Route path="search" element={<SearchResultPage />} />
         <Route path="car" element={<CarDetail />} />
         <Route path="*" element={<NoPage />} />

@@ -1,22 +1,23 @@
-from fastapi import FastAPI, Request , HTTPException,Header,Response
+from fastapi import FastAPI, Request , HTTPException,Header,Response,File, UploadFile
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse,JSONResponse
 from fastapi import Form
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import date,timedelta
-
+import shutil
+import os
 import uvicorn
 
-from user import User
-
 from websitecontroller import WebsiteController
+
 
 from fastapi.staticfiles import StaticFiles
 
 from post_model import *
 
 app = FastAPI()
-
+UPLOAD_DIRECTORY = "uploads"
+os.makedirs(UPLOAD_DIRECTORY, exist_ok=True)
 origins = [
     "http://localhost:3000",
     "localhost:3000"
@@ -39,12 +40,19 @@ site.register("tee@a","tee","0967459032","1234","lender")
 
 
 # app.mount("/static", StaticFiles(directory="static"), name="static")
-
+@app.post("/upload/")
+async def upload_file(file: UploadFile = File(...)):
+    try:
+        with open(os.path.join(UPLOAD_DIRECTORY, file.filename), "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
+    
+    return {"filename": file.filename}
 
 @app.get('/')
 def index(request: Request):
-    # return templates.TemplateResponse("index.html", {"request": request})
-    pass
+    return RedirectResponse(url="/docs")
 
 @app.get('/home')
 def home(request: Request):
@@ -63,43 +71,6 @@ async def home(request : Request,token:TokenModel):
             # return RedirectResponse(url=f"/lender/home")
     except:
         raise HTTPException(status_code=401, detail="Unauthorized")
-        # return {"token": token_input,"check": temp}
-# @app.get('/home.html')
-# def home(token: str = Header(...)):
-    
-#     header_token = token
-#     try :
-#         temp = site.check_token(str(header_token))
-#         if temp.role == "customer":
-#             return RedirectResponse(url=f"/customer/home?token={header_token}")
-#         elif temp.role == "lender":
-#             return RedirectResponse(url=f"/lender/home?token={header_token}")
-#     except:
-#         return {"status": "None"}
-    
-    # return {"token": header_token}
-    # return templates.TemplateResponse("home.html", {"request": Request, "token": header_token})
-    # if header_token is None:
-    #     return {"status": "None"}
-    # else:
-    #     temp = site.check_token(str(header_token))
-    #     if temp.role == "customer":
-    #         return RedirectResponse(url=f"/customer/home?token={token}")
-    #     elif temp.role == "lender":
-    #         return RedirectResponse(url=f"/lender/home?token={token}")
-    # return RedirectResponse(url=f"/customer/home?token={header_token}")
-
-
-
-
-# @app.get('/login.html')
-# def login(request: Request):
-#     return templates.TemplateResponse("login.html", {"request": request})
-
-# @app.get('/login')
-# def login(request: Request):
-#     return templates.TemplateResponse("login.html", {"request": request})
-#     pass
 
 @app.post('/login')
 # async def login(email: str, password: str):
@@ -111,7 +82,7 @@ async def login(login_data: LoginModel):
         raise HTTPException(status_code=201, detail="Incorrect Password")
     elif log == "Email not found":
         raise HTTPException(status_code=202, detail="Email not found")
-    return {"status": "Login Successful","token": site.check_user(email).token, "role": site.check_user(email).user.role}
+    return {"status": "Login Successful","name": site.find_user_with_email(email).user.name,"token": site.find_user_with_email(email).token, "role": site.find_user_with_email(email).user.role}
 
 @app.get('/register')
 def register(request: Request):
@@ -127,7 +98,7 @@ async def register(register_data: RegisterModel):
 
     log = site.register(email, name, phone_Number, password, role)
     if log == "Registration Successful":
-        return {"status": "Registration Successful","token": site.check_user(email).token}
+        return {"status": "Registration Successful","token": site.find_user_with_email(email).token}
         
     elif log == "User already exists":
         raise HTTPException(status_code=401, detail="User already exists")
@@ -191,21 +162,34 @@ async def make_reservation_post(request: Request, customer_id:int = Form(...), l
                     site.add_reservation(customers,cars,amount,new_start,new_end)
                     return {"Successful Reservation":{"From" : new_start, "To": new_end}}
 
-@app.get("/lender/home", tags =["Lender"])
-def lender_home_page(request: Request, token:str):
-    return templates.TemplateResponse("lender_home.html", {"request": request, "token": token})
+@app.get("/lender/car", tags =["API"])
+def get_all_car():
+    return {"Cars": {index: str(obj) for index, obj in enumerate(site.car_list)}}
 
-@app.get('/update_car', tags =["Lender"])
-def update_car_page(request: Request):
-    return templates.TemplateResponse("update_car.html", {"request": request})
+@app.post("/lender/add_car", tags = ["Lender"])
+async def add_car(car_data: CarModel,token:TokenModel):
+    name: str = car_data.name
+    model: str = car_data.model
+    licensePlate: str = car_data.licensePlate
+    deliveryArea: str = car_data.deliveryArea
+    price: int = car_data.price
+    carType: str = car_data.carType
+    transmission: str = car_data.transmission
+    seat: int = car_data.seat
+    seatType: str = car_data.seatType
+    fuelSystem: str = car_data.fuelSystem
+    engineCapacity: int = car_data.engineCapacity
+    door: int = car_data.door
 
-@app.get("/lender/{lender_id}/add_car", tags =["Lender"])
-def add_car_page(request:Request, lender_id:int):
-    return templates.TemplateResponse("add_car.html", {"request": request, "lender_id": lender_id})
+    temp = site.add_car(name, model, licensePlate, deliveryArea, price, carType, transmission, seat, seatType, fuelSystem, engineCapacity, door,token.token)
+    if temp == "You are not a lender":
+        raise HTTPException(status_code=401, detail="You are not a lender")
+    elif temp == "Token not found":
+        raise HTTPException(status_code=402, detail="Token not found")
+    return {"status": "Car Added Successfully"}
 
-@app.get("/lender/{lender_id}/get_car_unavailable_dates", tags =["Lender"])
-def get_car_unavailable_dates_page(request:Request, lender_id:int):
-    return templates.TemplateResponse("get_car_unavailable_dates.html", {"request": request, "lender_id": lender_id})
+
+
 
 @app.get("/lender/{lender_id}/car_list", tags=["Lender"])
 def car_list(lender_id:int) -> dict:
@@ -223,14 +207,14 @@ async def get_car_unavailable_dates_post(request: Request,lender_id:int = Form(.
                 return {"Car Unavailable Dates" : {index: {"DAY" : obj.day, "MONTH": obj.month, "YEAR": obj.year} for index, obj in enumerate(cars.unavailable_dates)}}
     return {"Error"}
 
-@app.post("/add_car", tags =["API"])
-async def add_car_post(request: Request, lender_id: int = Form(...),license:str=Form(...), location: str = Form(...), price: int = Form(...)):
-    for lenders in site.lender_list:
-        if lenders.id == lender_id:
-            temp = lenders.lend_car("AVAILABLE",license,location,price)
-            site.car_list.append(temp)
-            return {"Successful"}
-    return {"Not Successful"}
+# @app.post("/add_car", tags =["API"])
+# async def add_car_post(request: Request, lender_id: int = Form(...),license:str=Form(...), location: str = Form(...), price: int = Form(...)):
+#     for lenders in site.lender_list:
+#         if lenders.id == lender_id:
+#             temp = lenders.lend_car("AVAILABLE",license,location,price)
+#             site.car_list.append(temp)
+#             return {"Successful"}
+#     return {"Not Successful"}
 
 @app.post("/update_car", tags =["API"])
 async def update_car_post(request: Request, lender_id: int = Form(...), new_status: int = Form(...), license: str = Form(...)):
@@ -256,10 +240,9 @@ async def get_all_user():
 @app.post("/get_user_token", tags=["API"])
 async def get_user(request: Request, token:TokenModel):
     token_input:str = token.token
-    # return {token: token_input}
     temp = site.check_token(str(token_input))
     if temp is None:
-        return {"status": "Token not found"}
+        raise HTTPException(status_code=402,detail="token not found")
     return {"name":temp.name ,"plone_number":temp.phone_number,"role": temp.role}
 
 # @app.get('/init')

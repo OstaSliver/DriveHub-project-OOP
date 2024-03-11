@@ -1,7 +1,10 @@
 from DMY import DMY
+from car_detail import Car_detail
+
 class Car:
-    def __init__(self,status,license,owner,location,price):
+    def __init__(self,status,car_detail,license,owner,location,price):
         self.__status = status
+        self.__car_detail = car_detail
         self.__license = license
         self.__owner = owner
         self.__location = location

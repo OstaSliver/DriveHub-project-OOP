@@ -1,4 +1,7 @@
 from user import User,Customer,Lender
+from car import Car
+from car_detail import Car_detail
+
 from uuid import uuid4
 
 rand_token = uuid4()
@@ -97,28 +100,44 @@ class WebsiteController:
                 return "Incorrect Password"
         return "Email not found"
 
-    def check_token(self,token) -> User:
-        # log ={}
-        # log['tokenInput'] = token
-        # log['count'] = len(self.__token_list)
-        # log['tokenAll'] =[str(tokens.token) for tokens in self.token_list]
+    def find_user_with_token(self,token) -> User:
         for tokens in self.token_list:
             if str(tokens.token) == str(token):
-                # log['user'] = tokens.user
-                # return log
                 return tokens.user
-        # return {"status": "Token not found"}
-        # return log
         
     
-    def check_user(self,email):
+    def find_user_with_email(self,email):
 
         for token in self.__token_list:
             if token.user.email == email:
                 return token
         return 1
     
-    def add_car(self):
+    def find_lender(self,email):
+        for lender in self.lender_list:
+            if lender.email == email:
+                return lender
+        return None
+    
+    def add_car(self,name, model, licensePlate, deliveryArea, price, carType, transmission, seats, seatType, fuelSystem, engineCapacity, doors, token):
+
+        user = self.find_user_with_token(str(token))
+
+        if user is None:
+            return "Token not found"
+        elif user.role != "lender":
+            return "User is not a lender"
+        
+        temp = self.find_lender(user.email)
+        data_car = Car_detail( name, model, price,carType,seats, fuelSystem, doors, transmission, seatType, engineCapacity)
+        car = Car("AVAILABLE",data_car,licensePlate,user.name,deliveryArea,price)
+
+        temp.lend_car(car)
+        self.car_list.append(car)
+        return "Car Added Successfully"
+        
+
+
         pass
 
     def remove_car(self):

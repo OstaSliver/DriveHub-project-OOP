@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-function Home() {
-    const bgImgUrl = process.env.PUBLIC_URL + '/pictures/bg-homepage.jpg';
+import { useNavigate } from "react-router-dom";
 
+function Home() {
+    
+    
+    const bgImgUrl = process.env.PUBLIC_URL + '/pictures/bg-homepage.jpg';
+    
     return (
         <div
             style={{
@@ -170,7 +174,7 @@ const HowGood = () => {
 </div>
 
                 <div className="w-1/4 mx-4  p-4 ">
-                    <img src="pictures/cancelled.png" width="200" height="200" className='mb-5' alt='Calcel'/>
+                    <img src="pictures/cancelled.png" width="200" height="200" className='mb-5' alt='Cancel'/>
                     <h4 className='text-xl font-bold text-center'>ไม่มีบัตรเครดิตก็เช่าได้</h4>
                     <p className='text-center'>แค่ใช้เอกสารยืนยันเท่านั้น</p>
                 </div>

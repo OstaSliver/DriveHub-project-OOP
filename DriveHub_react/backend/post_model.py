@@ -23,4 +23,20 @@ class UserModel(BaseModel):
 class TokenModel(BaseModel):
     token: str
 
+
+class CarModel(BaseModel):
+    name: str
+    model: str
+    licensePlate: str
+    deliveryArea: str
+    price: str
+    carType: str
+    transmission: str
+    seat: str
+    seatType: str
+    fuelSystem: str
+    engineCapacity: str
+    door: str
+    owner: str
+
     
