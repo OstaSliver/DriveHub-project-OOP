@@ -1,44 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Navbar from '../components/Navbar';
 
 function LenderHome() {
-    const [name_user, setName_user] = useState('');
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch('http://127.0.0.1:8000/get_user_token', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ token: localStorage.getItem('token') }),
-                });
-                const data = await response.json();
-                console.log(data);
-                if (data.role !== 'lender') {
-                    navigator('/login');
-                } else {
-                    setName_user(data.name);
-                }
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    if (localStorage.getItem('token') === null) {
-        navigator('/login');
-    }
-
     return (
         <div>
             <div>
                 <Navbar />
                 <div style={{ marginLeft: '25%', marginTop: '7%' }}>
-                    <h1 className='text-6xl text-bold bg-gradient-to-r from-sky-500 via-30% to-emerald-500 to-90% inline-block text-transparent bg-clip-text'>สวัสดี, {name_user}</h1>
+                    <h1 className='text-6xl text-bold bg-gradient-to-r from-sky-500 via-30% to-emerald-500 to-90% inline-block text-transparent bg-clip-text'>สวัสดี, ศศิญากร </h1>
                 </div>
                 <YourCarsSection />
             </div>

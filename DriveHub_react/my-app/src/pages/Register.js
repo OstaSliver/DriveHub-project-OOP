@@ -14,28 +14,18 @@ function Register() {
         e.preventDefault();
         
         // Check if passwords match
-
-        if (name === "" || phone_number === "" || email === "" || role === "" || password === "" || confirmPassword === "") {
-            console.log("All fields are required");
-            alert("All fields are required");
-            return;
-        }
-
         if (password !== confirmPassword) {
             console.log("Passwords do not match");
-            alert("Passwords do not match");
             return;
         }
 
-        const data = {
-            name: `${name}`,
-            phone_Number:`${phone_number}`,
-            email: `${email}`,
-            role: `${role}`,
-            password: `${password}`
-            // contact_info: "Contact_info",
-            
-          };
+        const userData = {
+            name,
+            phone_number,
+            email,
+            role,
+            password
+        };
 
         try {
             const response = await fetch('http://127.0.0.1:8000/register', {
@@ -43,31 +33,15 @@ function Register() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(data),
+                body: JSON.stringify(userData),
             });
 
-            // if (!response.ok) {
-            //     throw new Error('Network response was not ok');
-            // }
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
 
-            if(response.status === 401){
-                console.log('User already exists');
-                alert('User already exists');
-                navigator('/login');
-            }
-            if(response.status === 402){
-                console.log('invalid input');
-                console.log(data)
-                alert('invalid input');
-            }
-            else if(response.status === 200){
-                console.log('User registered successfully');
-                alert('User registered successfully');
-                const responseData = await response.json();
-                localStorage.setItem('token', responseData.token);
-                localStorage.setItem('role', responseData.role);
-                navigator('/');
-            }            
+            console.log('User registered successfully');
+            
             // Optionally, you can handle the successful registration here, such as displaying a success message or redirecting to another page.
         } catch (error) {
             console.error('There was an error registering the user:', error);
@@ -174,9 +148,8 @@ function Register() {
                             value={role}
                             onChange={(e) => setRole(e.target.value)}
                         >
-                            <option>Select Role</option>
-                            <option>customer</option>
-                            <option>lender</option>
+                            <option>Customer (ผู้ใช้บริการ)</option>
+                            <option                                >Lender (ผู้ให้บริการเช่ารถ)</option>
                         </select>
                     </div>
                     <div className="flex items-center justify-between">

@@ -7,8 +7,9 @@ import Register from "./pages/Register";
 import NoPage from "./pages/Nopage";
 import AddCar from "./pages/AddCar";
 import LenderHome from "./pages/LenderHome";
-import Profile from "./pages/profile";
+import CarDetail from "./pages/CarDetail";
 import { useAuth} from "./provider/AuthContext"; 
+import SearchResultPage from "./pages/seachpage";
 
 export default function App() {
   const { role } = useAuth();
@@ -19,10 +20,11 @@ export default function App() {
       {role === "lender" ? (
           <Route path="" element={<LenderHome />} />
         ) : <Route path="" element={<Home />} />}
-        <Route path="profile" element={<Profile />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route path="addcar" element={<AddCar />} />
+        <Route path="search" element={<SearchResultPage />} />
+        <Route path="car" element={<CarDetail />} />
         <Route path="*" element={<NoPage />} />
       </Routes>
     </BrowserRouter>
