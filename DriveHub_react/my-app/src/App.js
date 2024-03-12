@@ -9,7 +9,7 @@ import AddCar from "./pages/AddCar";
 import LenderHome from "./pages/LenderHome";
 import CarDetail from "./pages/CarDetail";
 import { useAuth} from "./provider/AuthContext"; 
-import SearchResultPage from "./pages/seachpage";
+import SearchResultPage from "./pages/searchpage";
 
 export default function App() {
   const { role } = useAuth();

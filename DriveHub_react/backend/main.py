@@ -114,16 +114,22 @@ def get_all_reservations_page(customer_id:int) -> dict:
             return {"Reservations": {index: str(obj) for index, obj in enumerate(temp)}}
     return {"Error":"Error"}
 
-@app.post("/find_car")
-async def find_car_post(find_car_data: FindCarModel):
+@app.post("/search_car", tags=["Customer"])
+async def search_car(find_car_data: FindCarModel):
     location: str = find_car_data.location
     pickupdate: date = find_car_data.pickupdate
     returndate: date = find_car_data.returndate
-    temp = site.check_available_car(location,pickupdate,returndate)
-    if temp == "No available car":
-        return {"No available car"}
-    # return {"Available Car(s)" : {index: {"Car License": obj.license, "Price": obj.price} for index, obj in enumerate(temp)}}
 
+    temp = site.check_available_car(location,pickupdate,returndate)
+    return {"car": [
+            {
+                "Name": car.car_detail.name,
+                "Model": car.car_detail.model,
+                "price": car.price
+            }
+            for car in temp
+        ]}
+    
 @app.post("/lender/my_car", tags=["Lender"])
 async def my_car_post(tokens: TokenModel):
     token: str = tokens.token

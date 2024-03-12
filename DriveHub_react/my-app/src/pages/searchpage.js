@@ -1,12 +1,34 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import Navbar from "../components/Navbar";
+import dayjs, { Dayjs } from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 const SearchResultPage = () => {
-  const [searchQuery, setSearchQuery] = useState("");
+ 
+  const [pickupLocation, setPickupLocation] = useState("");
+  const [pickupDate, setPickupDate] = useState(null); // เปลี่ยนเป็น null เพื่อให้มันเป็นวัตถุ Dayjs ตอนเริ่มต้น
+  const [returnDate, setReturnDate] = useState(null); // เปลี่ยนเป็น null เพื่อให้มันเป็นวัตถุ Dayjs ตอนเริ่มต้น
+  const [availableCar, setAvailableCar] = useState("0");
   const [searchResults, setSearchResults] = useState([]);
+
+  useEffect(() => {
+    const storedPickupLocation = localStorage.getItem("pickupLocation");
+    if (storedPickupLocation) {
+      setPickupLocation(storedPickupLocation);
+    }
+    
+    const storedPickupDate = localStorage.getItem("pickupDate");
+    if (storedPickupDate) {
+      setPickupDate(dayjs(storedPickupDate)); // แปลงข้อมูลที่อ่านมาจาก LocalStorage เป็น Dayjs
+    }
+    
+    const storedReturnDate = localStorage.getItem("returnDate");
+    if (storedReturnDate) {
+      setReturnDate(dayjs(storedReturnDate)); // แปลงข้อมูลที่อ่านมาจาก LocalStorage เป็น Dayjs
+    }
+  }, []);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -52,22 +74,40 @@ const SearchResultPage = () => {
     if (pickupLocation === "" || pickupDate === "" || returnDate === "") {
       alert("Please fill in all fields");
     } else {
-      console.log(pickupLocation);
-      console.log(formatDate(pickupDate));
-      console.log(formatDate(returnDate));
+      // console.log(pickupLocation);
+      // console.log(formatDate(pickupDate));
+      // console.log(formatDate(returnDate));
+      const fetchData = async () => {
+        try {
+          const response = await fetch("http://127.0.0.1:8000/search_car", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ location: pickupLocation, pickupdate: formatDate(pickupDate), returndate: formatDate(returnDate) }),
+          });
+          const data = await response.json();
 
-      setAvailableCar(
-        dummyData.filter((item) => item.price === "Available").length
-      );
+          setSearchResults(data.car.map((car, index) => ({
+            id: index + 1,
+            title: car.Name,
+            description: car.Model,
+            imageUrl: "https://car-images.bauersecure.com/wp-images/3695/maserati-mc20-lead.jpg",
+            price: car.price,
+            review: "Good",
+          })));
 
-      setSearchResults(dummyData.filter((item) => item.price === "Available"));
+          setAvailableCar(data.car.length);
+
+          ;
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
+      fetchData();
     }
   };
 
-  const [pickupLocation, setPickupLocation] = useState("");
-  const [pickupDate, setPickupDate] = useState("");
-  const [returnDate, setReturnDate] = useState("");
-  const [AvailableCar, setAvailableCar] = useState("0");
 
   return (
     <div>
@@ -109,6 +149,7 @@ const SearchResultPage = () => {
                   <DatePicker
                     value={pickupDate}
                     onChange={(text) => setPickupDate(text)}
+
                   />
                 </LocalizationProvider>
               </div>
@@ -143,7 +184,7 @@ const SearchResultPage = () => {
       >
         <div className="flex items-center mb-4">
           <h1 className="text-2xl text-bold">
-            ผลการค้นหา: รถว่างทั้งหมด {AvailableCar} คัน
+            ผลการค้นหา: รถว่างทั้งหมด {availableCar} คัน
           </h1>
         </div>
 

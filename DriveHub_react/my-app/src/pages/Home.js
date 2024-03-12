@@ -19,6 +19,10 @@ function Home() {
         localStorage.setItem("pickupLocation", pickupLocation);
         localStorage.setItem("pickupDate", pickupDate);
         localStorage.setItem("returnDate", returnDate);
+
+        console.log(pickupLocation);
+        console.log(pickupDate);
+        console.log(returnDate);
         navigate("/search");
     }
   }
@@ -122,7 +126,7 @@ const TabsForRent = ({ handleSearch , pickupLocation , setPickupLocation, pickup
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DatePicker
                         value={pickupDate}
-                        onChange={(text) => setPickupDate(text)}
+                        onChange={(date) => setPickupDate(date)}
                       />
                     </LocalizationProvider>
                   </div>
@@ -133,7 +137,7 @@ const TabsForRent = ({ handleSearch , pickupLocation , setPickupLocation, pickup
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DatePicker
                         value={returnDate}
-                        onChange={(text) => setReturnDate(text)}
+                        onChange={(date) => setReturnDate(date)}
                       />
                     </LocalizationProvider>
                   </div>

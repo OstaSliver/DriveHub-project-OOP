@@ -1,7 +1,8 @@
 from user import User,Customer,Lender
 from car import Car
 from car_detail import Car_detail
-
+from DMY import DMY
+from datetime import date,timedelta
 from uuid import uuid4
 
 rand_token = uuid4()
@@ -165,17 +166,24 @@ class WebsiteController:
         pass
 
     def check_available_car(self,location,pickup_date,return_date):
-        car_list = []
+        unavailable = False
+        available_car = []
+        temp = pickup_date.split("/")
+        start = DMY(int(temp[0]),int(temp[1]),int(temp[2]))
+        temp = return_date.split("/")
+        end = DMY(int(temp[0]),int(temp[1]),int(temp[2]))
         for car in self.car_list:
             if car.location == location:
-                # for date in car.unavailable_dates:
-                #     if date.day == pickup_date.day and date.month == pickup_date.month and date.year == pickup_date.year:
-                #         return "Car not available"
-                #     elif date.day == return_date.day and date.month == return_date.month and date.year == return_date.year:
-                #         return "Car not available"
-                #     else :
-                car_list.append(car)
-        return car_list
+                if car.status == "AVAILABLE":
+                    for date in car.unavailable_dates:
+                        if date.year == start.year and date.month == start.month:
+                            if date.day >= start.day and date.day <= end.day:
+                                unavailable = True
+                                break
+                    if not unavailable:
+                        available_car.append(car)
+                        unavailable = False
+        return available_car
                 
     
 
