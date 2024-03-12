@@ -10,7 +10,9 @@ function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isNavbarOpen, setIsNavbarOpen] = useState(false);
+
   const handleSubmit = async (e) => {
+    
     e.preventDefault();
 
     // Check if passwords match

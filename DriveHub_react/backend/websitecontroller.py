@@ -111,7 +111,7 @@ class WebsiteController:
         for token in self.__token_list:
             if token.user.email == email:
                 return token
-        return 1
+        return None
     
     def find_lender(self,email):
         for lender in self.lender_list:
@@ -164,11 +164,44 @@ class WebsiteController:
     def pay_back_deposit(self):
         pass
 
-    def check_available_car(self):
-        pass
+    def check_available_car(self,location,pickup_date,return_date):
+        car_list = []
+        for car in self.car_list:
+            if car.location == location:
+                # for date in car.unavailable_dates:
+                #     if date.day == pickup_date.day and date.month == pickup_date.month and date.year == pickup_date.year:
+                #         return "Car not available"
+                #     elif date.day == return_date.day and date.month == return_date.month and date.year == return_date.year:
+                #         return "Car not available"
+                #     else :
+                car_list.append(car)
+        return car_list
+                
+    
 
     def get_payment(self):
         pass
 
     def view_reservation(self):
         pass
+
+    def init_car_list(self):
+        owner = self.find_user_with_email("tee@a")
+        lender = self.find_lender("tee@a")
+
+
+
+        car = Car_detail("Toyota","Camry", 100,"Sedan",4,"Petrol",4,"Automatic","Leather",2000)
+        car_detail2 = Car_detail("Honda", "Accord", 120, "Sedan", 4, "Petrol", 4, "Automatic", "Cloth", 1800)
+        car_detail3 = Car_detail("Nissan", "Altima", 110, "Sedan", 4, "Petrol", 4, "Automatic", "Cloth", 2000)
+        car1 = Car("AVAILABLE",car,"ABC123",owner.user.name,"ECC",100)
+        car2 = Car("AVAILABLE", car_detail2, "DEF456", owner.user.name, "ECC", 150)
+        car2 = Car("AVAILABLE", car_detail2, "DEF456", owner.user.name, "ECC", 150)
+        car3 = Car("AVAILABLE", car_detail3, "GHI789", owner.user.name, "ECC", 120)
+        self.car_list.append(car1)
+        lender.lend_car(car1)
+        self.car_list.append(car2)
+        lender.lend_car(car2)
+        self.car_list.append(car3)
+        lender.lend_car(car3)
+        

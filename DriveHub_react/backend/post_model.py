@@ -39,4 +39,9 @@ class CarModel(BaseModel):
     door: str
     owner: str
 
+class FindCarModel(BaseModel):
+    location: str
+    pickupdate: str
+    returndate: str
+
     

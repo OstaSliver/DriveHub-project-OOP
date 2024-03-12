@@ -37,8 +37,6 @@ site = WebsiteController()
 site.register("oat@a","oat","0967459032","1234","customer")
 site.register("tee@a","tee","0967459032","1234","lender")
 
-
-
 # app.mount("/static", StaticFiles(directory="static"), name="static")
 @app.post("/upload/")
 async def upload_file(file: UploadFile = File(...)):
@@ -53,10 +51,6 @@ async def upload_file(file: UploadFile = File(...)):
 @app.get('/')
 def index(request: Request):
     return RedirectResponse(url="/docs")
-
-@app.get('/home')
-def home(request: Request):
-    return templates.TemplateResponse("home.html", {"request": request})
 
 @app.post('/home')
 async def home(request : Request,token:TokenModel):
@@ -83,10 +77,6 @@ async def login(login_data: LoginModel):
     elif log == "Email not found":
         raise HTTPException(status_code=202, detail="Email not found")
     return {"status": "Login Successful","name": site.find_user_with_email(email).user.name,"token": site.find_user_with_email(email).token, "role": site.find_user_with_email(email).user.role}
-
-@app.get('/register')
-def register(request: Request):
-    return templates.TemplateResponse("register.html", {"request": request})
 
 @app.post('/register')
 async def register(register_data: RegisterModel):
@@ -116,14 +106,6 @@ def get_all_customer():
 def get_all_lender():
     return {"Lenders": {index: str(obj) for index, obj in enumerate(site.lender_list)}}
 
-@app.get("/customer/home", tags =["Customer"])
-def customer_home_page(request: Request, token: str):
-    return templates.TemplateResponse("customer_home.html", {"request": request, "token": token})
-
-@app.get("/reservations", tags=["Customer"])
-def get_all_reservations_page(request: Request):
-    return templates.TemplateResponse("reservations.html", {"request": request})
-
 @app.post("/reservations", tags=["Customer"])
 def get_all_reservations_page(customer_id:int) -> dict:
     for customers in site.customer_list:
@@ -132,22 +114,36 @@ def get_all_reservations_page(customer_id:int) -> dict:
             return {"Reservations": {index: str(obj) for index, obj in enumerate(temp)}}
     return {"Error":"Error"}
 
-@app.get("/customer/{customer_id}/find_car", tags = ["Customer"])
-def find_car_page(request:Request,customer_id: int):
-    return templates.TemplateResponse("find_car.html", {"request":request, "customer_id": customer_id})
-
-@app.get("/customer/{customer_id}/make_reservation", tags = ["Customer"])
-def make_reservation_page(request: Request,customer_id:int):
-    return templates.TemplateResponse("make_reservation.html", {"request": request, "customer_id": customer_id})
-
 @app.post("/find_car")
-async def find_car_post(request:Request, customer_id:int = Form(...), location:str = Form(...), start_date:date = Form(...), end_date:date = Form(...)):
-    start = str(start_date).split("-")
-    end = str(end_date).split("-")
-    new_start = f"{start[2]}/{start[1]}/{start[0]}"
-    new_end = f"{end[2]}/{end[1]}/{end[0]}"
-    temp = site.check_available_car(location,new_start,new_end)
-    return {"Available Car(s)" : {index: {"Car License": obj.license, "Price": obj.price} for index, obj in enumerate(temp)}}
+async def find_car_post(find_car_data: FindCarModel):
+    location: str = find_car_data.location
+    pickupdate: date = find_car_data.pickupdate
+    returndate: date = find_car_data.returndate
+    temp = site.check_available_car(location,pickupdate,returndate)
+    if temp == "No available car":
+        return {"No available car"}
+    # return {"Available Car(s)" : {index: {"Car License": obj.license, "Price": obj.price} for index, obj in enumerate(temp)}}
+
+@app.post("/lender/my_car", tags=["Lender"])
+async def my_car_post(tokens: TokenModel):
+    token: str = tokens.token
+    role = site.find_user_with_token(str(token))
+    if role is None:
+        raise HTTPException(status_code=402, detail="Token not found")
+
+    if role.role == "lender":
+        lender_temp = site.find_lender(role.email)
+        return {"car": [
+            {
+                "Name": car.car_detail.name,
+                "Model": car.car_detail.model,
+                "Status": car.status
+            }
+            for car in lender_temp.lent_cars
+        ]}
+    return {"Error": "You are not a lender"}
+
+
 
 @app.post("/make_reservation")
 async def make_reservation_post(request: Request, customer_id:int = Form(...), license:str = Form(...), amount:int=Form(...),start_date:date = Form(...), end_date:date = Form(...)):
@@ -234,22 +230,21 @@ async def update_car_post(request: Request, lender_id: int = Form(...), new_stat
 async def get_all_user():
     data = []
     for user in site.user_list:
-        data.append({"email": user.email, "Name": user.name, "Phone_Number": user.phone_number, "Password": user.password, "Contact_info": user.contact_info, "Role": user.role , "Token": site.check_user(user.email).token})
+        data.append({"email": user.email, "Name": user.name, "Phone_Number": user.phone_number, "Password": user.password, "Contact_info": user.contact_info, "Role": user.role , "Token": site.find_user_with_email(user.email).token})
     return data
 
 @app.post("/get_user_token", tags=["API"])
 async def get_user(request: Request, token:TokenModel):
     token_input:str = token.token
-    temp = site.check_token(str(token_input))
+    temp = site.find_user_with_token(str(token_input))
     if temp is None:
         raise HTTPException(status_code=402,detail="token not found")
     return {"name":temp.name ,"plone_number":temp.phone_number,"role": temp.role}
 
-# @app.get('/init')
-# async def init_user():
-#     init()
-#     return {"status": "Init Successful"}
-#     # return {site.user_list[0].email}
+@app.post("/Car_list/init", tags=["API"])
+async def init_car_list(request: Request):
+    site.init_car_list()
+    return {"status":"Car list initialized"}
 
 if __name__ == "__main__":
     uvicorn.run(

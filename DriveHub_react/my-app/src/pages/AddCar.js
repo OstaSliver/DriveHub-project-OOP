@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../provider/AuthContext";
 
 function AddCar() {
@@ -21,6 +21,12 @@ function AddCar() {
   const [door, setDoor] = useState("");
   const [seatType, setSeatType] = useState("");
   const [engineCapacity, setEngineCapacity] = useState("");
+
+  const navigateBack = () => {
+    setTimeout(() => {
+      navigate(-1); // นำผู้ใช้กลับไปยังหน้าเว็บก่อนหน้า
+    }, 100); // จับเวลาเป็น 3 วินาที (3000 มิลลิวินาที)
+  };
 
   const handleSubmitform1 = async (e) => {
     e.preventDefault();
@@ -53,6 +59,10 @@ function AddCar() {
       token: tokenData,
     };
 
+    if (name === "" || model === "" || licensePlate === "" || price === "" || carType === "" || transmission === "" || seat === "" || seatType === "" || fuelSystem === "" || engineCapacity === "" || door === "" || deliveryArea === "") {
+      alert("Please fill in all fields");
+      return;
+    }
     try {
       const response = await fetch("http://127.0.0.1:8000/lender/add_car", {
         method: "POST",
@@ -73,88 +83,96 @@ function AddCar() {
         handleLogout();
         navigate("/");
       }
+
+      if (response.status === 200) {
+        console.log("Car added successfully");
+        alert("Car added successfully");
+        navigate("/");
+      }
     } catch (err) {
       console.log(err);
     }
   };
 
-  useEffect(() => {
-    // ตรวจสอบ role ก่อนเรียกใช้งาน navigate
-    if (role !== "lender") {
-      navigate("/home");
-    }
-  }, [role, navigate]);
+  if (role === "customer") {
+    navigateBack();
 
+    return (
+      <div>
+        <h1 id="Permission Denied">Permission Denied</h1>
+      </div>
+    );
+  }
   return (
-      <div
-        style={{
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          minHeight: "100vh",
-          opacity: 1,
-        }}
-      >
-        <Navbar />
-        <div style={{ marginTop: "5%", marginLeft: "20%" }}>
-          <Link to="/" className="text-blue-500 hover:text-violet-600">
-            Back to Homepage
-          </Link>
+    <div
+      style={{
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        minHeight: "100vh",
+        opacity: 1,
+      }}
+    >
+      <Navbar />
+      <div style={{ marginTop: "5%", marginLeft: "20%" }}>
+        <Link to="/" className="text-blue-500 hover:text-violet-600">
+          Back to Homepage
+        </Link>
+      </div>
+      <div className="h-full">
+        <div
+          className="flex items-center justify-center "
+          style={{
+            marginTop: "5%",
+            marginLeft: "20%",
+            marginBottom: "5%",
+            marginRight: "50%",
+          }}
+        >
+          <h1 className="text-4xl font-bold text-black w-full">
+            เพิ่มรถให้เช่า
+          </h1>
         </div>
-        <div className="h-full">
-          <div
-            className="flex items-center justify-center "
-            style={{
-              marginTop: "5%",
-              marginLeft: "20%",
-              marginBottom: "5%",
-              marginRight: "50%",
-            }}
-          >
-            <h1 className="text-4xl font-bold text-black w-full">
-              เพิ่มรถให้เช่า
-            </h1>
-          </div>
-        </div>
-        <div className="flex " style={{ marginLeft: "20%" }}>
-          <AddPicture />
-          <div className="flex" style={{ marginLeft: "1%" }}>
-            <CarForm_1
-              setName={setName}
-              name={name}
-              setModel={setModel}
-              model={model}
-              setPrice={setPrice}
-              price={price}
-              setLicensePlate={setLicensePlate}
-              licensePlate={licensePlate}
-              setDeliveryArea={setDeliveryArea}
-              deliveryArea={deliveryArea}
-            />
-          </div>
-        </div>
-        <div className="flex" style={{ marginTop: "5%", marginLeft: "20%" }}>
-          <CarForm_2
-            setCarType={setCarType}
-            carType={carType}
-            setSeat={setSeat}
-            seat={seat}
-            setfuelSystem={setfuelSystem}
-            fuelSystem={fuelSystem}
-            setDoor={setDoor}
-            door={door}
-          />
-          <CarForm_3
-            handleSubmitform1={handleSubmitform1}
-            setTransmission={setTransmission}
-            transmission={transmission}
-            setSeatType={setSeatType}
-            seatType={seatType}
-            setEngineCapacity={setEngineCapacity}
-            engineCapacity={engineCapacity}
+      </div>
+      <div className="flex " style={{ marginLeft: "20%" }}>
+        <AddPicture />
+        <div className="flex" style={{ marginLeft: "1%" }}>
+          <CarForm_1
+            setName={setName}
+            name={name}
+            setModel={setModel}
+            model={model}
+            setPrice={setPrice}
+            price={price}
+            setLicensePlate={setLicensePlate}
+            licensePlate={licensePlate}
+            setDeliveryArea={setDeliveryArea}
+            deliveryArea={deliveryArea}
           />
         </div>
       </div>
+      <div className="flex" style={{ marginTop: "5%", marginLeft: "20%" }}>
+        <CarForm_2
+          setCarType={setCarType}
+          carType={carType}
+          setSeat={setSeat}
+          seat={seat}
+          setfuelSystem={setfuelSystem}
+          fuelSystem={fuelSystem}
+          setDoor={setDoor}
+          door={door}
+        />
+        <CarForm_3
+          handleSubmitform1={handleSubmitform1}
+          setTransmission={setTransmission}
+          transmission={transmission}
+          setSeatType={setSeatType}
+          seatType={seatType}
+          setEngineCapacity={setEngineCapacity}
+          engineCapacity={engineCapacity}
+        />
+      </div>
+    </div>
   );
 }
 
@@ -277,9 +295,14 @@ const CarForm_1 = ({
         </label>
         <select
           id="deliveryArea"
+          value={deliveryArea}
+          onChange={(e) => setDeliveryArea(e.target.value)}
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
         >
           <option value="">เลือกพื้นที่</option>
+          <option>พระเทพ</option>
+          <option>ECC</option>
+          <option>ตึกโกล</option>
         </select>
 
         <div className="mb-4 mt-4">

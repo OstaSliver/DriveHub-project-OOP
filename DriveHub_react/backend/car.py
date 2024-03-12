@@ -4,7 +4,7 @@ from car_detail import Car_detail
 class Car:
     def __init__(self,status,car_detail,license,owner,location,price):
         self.__status = status
-        self.__car_detail = car_detail
+        self.__car_detail:Car_detail = car_detail
         self.__license = license
         self.__owner = owner
         self.__location = location
@@ -21,6 +21,10 @@ class Car:
     def status(self):
         return self.__status
     
+    @property
+    def car_detail(self):
+        return self.__car_detail
+
     @property
     def license(self):
         return self.__license
