@@ -103,7 +103,7 @@ const Navbar = () => {
                     {role === 'customer'&& (
                       <>
                         <li>
-                          <Link to="/reservation" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">รายการจอง</Link>
+                          <Link to="/reserveDetail" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">รายการจอง</Link>
                         </li>
                         <li>
                           <Link to="/profile" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">โปรไฟล์</Link>
