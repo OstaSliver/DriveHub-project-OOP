@@ -11,6 +11,7 @@ import CarDetail from "./pages/CarDetail";
 import { useAuth} from "./provider/AuthContext"; 
 import SearchResultPage from "./pages/searchpage";
 import ConfirmationPage from "./pages/ConfirmationPage";
+import CarEditPage from "./pages/CarEditPage";
 
 export default function App() {
   const { role } = useAuth();
@@ -31,7 +32,9 @@ export default function App() {
         <Route path="search" element={<SearchResultPage />} />
         <Route path="search/car/:license" element={<CarDetail />} />
         <Route path="confirmation/:license/:start_date/:end_date" element={<ConfirmationPage />} />
+        <Route path="edit/:license" element={<CarEditPage />} />
         <Route path="*" element={<NoPage />} />
+
       </Routes>
     </BrowserRouter>
   );

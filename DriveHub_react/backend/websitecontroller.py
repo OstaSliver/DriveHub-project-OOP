@@ -22,14 +22,6 @@ class Token:
     
 class WebsiteController:
     def __init__(self):
-        # self.User_list = []
-        # self.Brand_list = []
-        # self.Car_list = []
-        # self.Reservation_list = []
-        # self.Car_reserved_date_list = []
-        # self.Review_list = []
-        # self.Payment_list = []
-        # self.Waiting_for_approval_car_lost = []
 
         self.__user_list = []
         self.__customer_list = []
@@ -82,7 +74,6 @@ class WebsiteController:
             self.user_list.append(user)
 
         elif (Role == "lender"):
-
             lender = Lender(email, Name, Phone_Number, Password)
             user = User(email, Name, Phone_Number, Password)
             user.role = "lender"
@@ -91,7 +82,6 @@ class WebsiteController:
             self.token_list.append(token_data)
             self.lender_list.append(lender)
             self.user_list.append(user)
-
         else:
             return "Invalid Role"
         
@@ -125,6 +115,12 @@ class WebsiteController:
                 return lender
         return None
     
+    def find_car(self,license):
+        for car in self.car_list:
+            if car.license == license:
+                return car
+        return None
+    
     def add_car(self,name, model, licensePlate, deliveryArea, price, carType, transmission, seats, seatType, fuelSystem, engineCapacity, doors, token):
 
         user = self.find_user_with_token(str(token))
@@ -144,7 +140,26 @@ class WebsiteController:
         
 
 
-        pass
+    def edit_car(self,name, model, licensePlate, deliveryArea, price, carType, transmission, seats, seatType, fuelSystem, engineCapacity, doors, token):
+        user = self.find_user_with_token(str(token))
+
+        if user is None:
+            return "Token not found"
+        elif user.role != "lender":
+            return "User is not a lender"
+        
+        car = self.find_car(licensePlate)
+        if car is None:
+            return "Car not found"
+        elif car.owner != user.name:
+            return "You are not the owner of the car"
+        else:
+            lender = self.find_lender(user.email)
+            car.edit_car(name, model, licensePlate, deliveryArea, price, carType, transmission, seats, seatType, fuelSystem, engineCapacity, doors)
+            lender.find_lent_car(licensePlate).edit_car(name, model, licensePlate, deliveryArea, price, carType, transmission, seats, seatType, fuelSystem, engineCapacity, doors)
+            return "Car Edited Successfully"
+    
+        
 
     def remove_car(self):
         pass
@@ -153,18 +168,6 @@ class WebsiteController:
         pass
 
     def add_history(self):
-        pass
-
-    def update_car_status(self):
-        pass
-
-    def pay_lender(self):
-        pass
-
-    def add_brand(self):
-        pass
-
-    def pay_back_deposit(self):
         pass
 
     def check_available_car(self, location, start_date, end_date):
@@ -185,14 +188,6 @@ class WebsiteController:
                     if not unavailable:
                         available_car.append(car)
         return available_car
-
-            
-
-    def get_payment(self):
-        pass
-
-    def view_reservation(self):
-        pass
 
     def init_car_list(self):
         owner = self.find_user_with_email("tee@a")

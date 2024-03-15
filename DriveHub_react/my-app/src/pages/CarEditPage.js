@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
-import RatingForm from "../components/review";
-import ReservationModal from "../components/ReservationModal";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../provider/AuthContext";
 
 const EditCar = () => {
   const { auth, handleLogout, role } = useAuth(); // ดึงข้อมูลบทบาทของผู้ใช้จาก Context
@@ -22,6 +22,8 @@ const EditCar = () => {
   const [seatType, setSeatType] = useState("");
   const [engineCapacity, setEngineCapacity] = useState("");
 
+  const license = window.location.pathname.split('/').pop();
+  
   const handleSubmitform1 = async (e) => {
     e.preventDefault();
 
@@ -62,14 +64,17 @@ const EditCar = () => {
       alert("Please fill in all fields");
       return;
     }
-    const response = await fetch("http://127.0.0.1:8000/lender/add_car", {
+
+    const response = await fetch(`http://127.0.0.1:8000/lender/edit/${license}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      // body: JSON.stringify(requestData),
-      body: JSON.stringify(carData),
+      body: JSON.stringify(carData)
     });
+
+    const data = await response.json();
+    console.log(data);
 
     if (response.status === 401) {
       console.log("You are not a lender");
@@ -86,9 +91,44 @@ const EditCar = () => {
     if (response.status === 200) {
       console.log("Car added successfully");
       alert("Car added successfully");
-      navigate("/");
+
+      // navigate("/");
     }
+
   };
+
+  useEffect(() => {
+    const fetchCarInfo = async () => {
+      try { // Extract license from URL
+            const response = await fetch(`http://localhost:8000/search/car/${license}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch car information');
+            }
+            const data = await response.json();
+            console.log(data.car_detail[0]);
+            setName(data.car_detail[0].name);
+            setModel(data.car_detail[0].model);
+            setPrice(data.car_detail[0].price);
+            setLicensePlate(data.car_detail[0].license_plate);
+            setDeliveryArea(data.car_detail[0].delivery_area);
+            setCarType(data.car_detail[0].car_type);
+            setSeat(data.car_detail[0].seats);
+            setfuelSystem(data.car_detail[0].fuel_system);
+            setDoor(data.car_detail[0].doors);
+            setTransmission(data.car_detail[0].transmission);
+            setSeatType(data.car_detail[0].seat_type);
+            setEngineCapacity(data.car_detail[0].engine_capacity);
+
+          } catch (error) {
+              console.error('Error fetching car information:', error);
+          }
+    };
+    console.log(licensePlate);
+    fetchCarInfo();
+}, []);
+
+
+
 
   return (
     <div
@@ -442,7 +482,7 @@ const CarForm_3 = ({
             type="sumbit"
             className="w-full px-7 py-2 text-white border border-gray-300 rounded-full bg-gradient-to-r from-blue-500 to-pink-400 focus:outline-none focus:border-indigo-500"
           >
-            เพิ่มรถ
+            แก้ไข
           </button>
         </div>
       </form>

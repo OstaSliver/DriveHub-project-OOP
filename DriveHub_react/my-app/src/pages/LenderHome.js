@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../provider/AuthContext";
 
 function LenderHome() {
@@ -8,30 +8,6 @@ function LenderHome() {
   const [cars, setCars] = useState([]);
   const { auth, handleLogout } = useAuth();
   const navigate = useNavigate();
-
-  const test_data = [
-    {
-      "id": 1,
-      "title": "Toyota",
-      "description": "Camry",
-      "imageUrl": "https://car-images.bauersecure.com/wp-images/3695/maserati-mc20-lead.jpg",
-      "status": "AVAILABLE"
-    },
-    {
-      "id": 2,
-      "title": "Honda",
-      "description": "Accord",
-      "imageUrl": "https://car-images.bauersecure.com/wp-images/3695/maserati-mc20-lead.jpg",
-      "status": "AVAILABLE"
-    },
-    {
-      "id": 3,
-      "title": "Nissan",
-      "description": "Altima",
-      "imageUrl": "https://car-images.bauersecure.com/wp-images/3695/maserati-mc20-lead.jpg",
-      "status": "AVAILABLE"
-    }
-  ];
 
   useEffect(() => {
     const storedName = localStorage.getItem("name");
@@ -167,15 +143,15 @@ const CarCard = ({ car }) => {
                 fontSize: "100%",
                 paddingTop: "2%",
               }}
-              // className={car.status === "Available" ? "text-red-600" : "text-green-700"}
             >
               {car.license}
             </h1>
           </div>
-
+          <Link to={`edit/${car.license}`}>
           <button className="bg-gradient-to-r from-blue-500 to-green-500 text-white hover:from-blue-400 hover:to-green-400 w-auto pl-10 pr-10 rounded-full mt-5 ">
             แก้ไขข้อมูล
           </button>
+          </Link>
         </div>
       </div>
     </div>

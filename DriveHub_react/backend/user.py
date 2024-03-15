@@ -78,6 +78,12 @@ class Lender(User):
         # temp = Car(status,license,self,location,price)
         self.lent_cars.append(car_obj)
 
+    def find_lent_car(self,license):
+        for car in self.lent_cars:
+            if car.license == license:
+                return car
+        return None
+
     def update_car_status(self,updated_status,car_instance):
         if (self == car_instance.owner):
             if updated_status == 0:

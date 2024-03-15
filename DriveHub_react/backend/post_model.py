@@ -39,7 +39,7 @@ class CarModel(BaseModel):
     door: str
     owner: str
 
-class add_car_model(BaseModel):
+class token_and_car_model(BaseModel):
     name: str
     model: str
     licensePlate: str

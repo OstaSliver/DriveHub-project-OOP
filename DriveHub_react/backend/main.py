@@ -104,10 +104,13 @@ async def get_car_details(license: str):
                 {
                     "name":detail.name,
                     "model":detail.model,
+                    "car_type":detail.carType,
                     "seats":detail.seats,
+                    "license_plate":cars.license,
                     "fuel_system":detail.fuelSystem,
                     "doors":detail.doors,
                     "transmission":detail.transmission,
+                    "delivery_area":cars.location,
                     "seat_type":detail.seatType,
                     "engine_capacity":detail.engineCapacity,
                     "price":detail.price,
@@ -176,9 +179,7 @@ async def my_car_post(tokens: TokenModel):
     return {"Error": "You are not a lender"}
 
 @app.post("/lender/add_car", tags = ["Lender"])
-
-async def add_car(add_car: add_car_model):
-
+async def add_car(add_car: token_and_car_model):
     name: str = add_car.name
     model: str = add_car.model
     licensePlate: str = add_car.licensePlate
@@ -198,6 +199,36 @@ async def add_car(add_car: add_car_model):
     elif temp == "Token not found":
         raise HTTPException(status_code=402, detail="Token not found")
     return {"status": "Car Added Successfully"}
+
+@app.post("/lender/edit/{license}", tags = ["Lender"])
+async def edit_car(edit_data: token_and_car_model):
+    name: str = edit_data.name
+    model: str = edit_data.model
+    licensePlate: str = edit_data.licensePlate
+    deliveryArea: str = edit_data.deliveryArea
+    price: str = edit_data.price
+    carType: str = edit_data.carType
+    transmission : str = edit_data.transmission
+    seat: str = edit_data.seat
+    seatType: str = edit_data.seatType
+    fuelSystem: str = edit_data.fuelSystem
+    engineCapacity: str = edit_data.engineCapacity
+    door: str = edit_data.door
+    token: str = edit_data.token
+
+    temp = site.edit_car(name, model, licensePlate, deliveryArea, price, carType, transmission, seat, seatType, fuelSystem, engineCapacity, door, token)
+
+    if temp == "You are not a lender":
+        raise HTTPException(status_code=401, detail="You are not a lender")
+    elif temp == "Token not found":
+        raise HTTPException(status_code=402, detail="Token not found")
+    elif temp == "Car not found":
+        raise HTTPException(status_code=403, detail="Car not found")
+    elif temp == "You are not the owner of the car":
+        raise HTTPException(status_code=404, detail="You are not the owner of the car")
+    elif temp == "Car Edited Successfully":
+        return {"status": "Car Edited Successfully"}
+
 
 @app.get("/get_car_unavailable_dates", tags = ["Lender"])
 async def get_car_unavailable_dates_post(license:str):
