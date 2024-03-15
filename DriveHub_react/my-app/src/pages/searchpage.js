@@ -39,35 +39,35 @@ const SearchResultPage = () => {
     return `${day}/${month}/${year}`;
   };
 
-  const dummyData = [
-    {
-      id: 1,
-      title: "ชื่อ",
-      description: "รุ่น",
-      imageUrl:
-        "https://car-images.bauersecure.com/wp-images/3695/maserati-mc20-lead.jpg",
-      price: "Available",
-      review: "Good",
-    },
-    {
-      id: 2,
-      title: "ชื่อ",
-      description: "รุ่น",
-      imageUrl:
-        "https://car-images.bauersecure.com/wp-images/3695/maserati-mc20-lead.jpg",
-      price: "Reserved",
-      review: "Excellent",
-    },
-    {
-      id: 3,
-      title: "ชื่อ",
-      description: "รุ่น",
-      imageUrl:
-        "https://car-images.bauersecure.com/wp-images/3695/maserati-mc20-lead.jpg",
-      price: "Available",
-      review: "Average",
-    },
-  ];
+  // const dummyData = [
+  //   {
+  //     id: 1,
+  //     title: "ชื่อ",
+  //     description: "รุ่น",
+  //     imageUrl:
+  //       "https://car-images.bauersecure.com/wp-images/3695/maserati-mc20-lead.jpg",
+  //     price: "Available",
+  //     review: "Good",
+  //   },
+  //   {
+  //     id: 2,
+  //     title: "ชื่อ",
+  //     description: "รุ่น",
+  //     imageUrl:
+  //       "https://car-images.bauersecure.com/wp-images/3695/maserati-mc20-lead.jpg",
+  //     price: "Reserved",
+  //     review: "Excellent",
+  //   },
+  //   {
+  //     id: 3,
+  //     title: "ชื่อ",
+  //     description: "รุ่น",
+  //     imageUrl:
+  //       "https://car-images.bauersecure.com/wp-images/3695/maserati-mc20-lead.jpg",
+  //     price: "Available",
+  //     review: "Average",
+  //   },
+  // ];
 
   const handleSearch = () => {
     const results_car = [];
@@ -262,7 +262,7 @@ const SearchResultPage = () => {
                     >
                       Review: {result.review}
                     </p>
-                    <button className="bg-gradient-to-r from-blue-500 to-green-500 text-white hover:from-blue-400 hover:to-green-400 w-auto pl-10 pr-10 rounded-full mt-5">
+                    <button className="bg-gradient-to-r from-blue-500 to-green-500 text-white hover:from-blue-400 hover:to-green-400 w-auto pl-10 pr-10 rounded-full mt-5" value={result.license}>
                       รายละเอียดรถเช่า
                     </button>
                   </div>

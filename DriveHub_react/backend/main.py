@@ -125,7 +125,8 @@ async def search_car(find_car_data: FindCarModel):
             {
                 "Name": car.car_detail.name,
                 "Model": car.car_detail.model,
-                "price": car.price
+                "price": car.price,
+                "license": car.license
             }
             for car in temp
         ]}

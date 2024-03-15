@@ -80,7 +80,6 @@ function RatingForm() {
                 paddingTop: "5%",
               }}
             >
-              Toyota Yaris 2016
             </h1>
           
           </div>
