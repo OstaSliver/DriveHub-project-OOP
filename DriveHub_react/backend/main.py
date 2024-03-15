@@ -36,32 +36,10 @@ site = WebsiteController()
 site.register("oat@a","oat","0967459032","1234","customer")
 site.register("tee@a","tee","0967459032","1234","lender")
 
-# app.mount("/static", StaticFiles(directory="static"), name="static")
-@app.post("/upload/")
-async def upload_file(file: UploadFile = File(...)):
-    try:
-        with open(os.path.join(UPLOAD_DIRECTORY, file.filename), "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
-    except Exception as e:
-        return JSONResponse(status_code=500, content={"error": str(e)})
-    
-    return {"filename": file.filename}
-
 @app.get('/')
 def index(request: Request):
     return RedirectResponse(url="/docs")
 
-# @app.get("/get_role")
-# async def get_role(request:Request,token:TokenModel):
-#     token_input = token.token
-#     return {site.check_token(str(token_input))}
-#     try :
-#         if temp == "customer":
-#             return "customer"
-#         elif temp == "lender":
-#             return "lender"
-#     except:
-#         raise HTTPException(status_code=401, detail="Unauthorized")
 
 @app.post('/home')
 async def home(request : Request,token:TokenModel):
@@ -78,7 +56,6 @@ async def home(request : Request,token:TokenModel):
         raise HTTPException(status_code=401, detail="Unauthorized")
 
 @app.post('/login')
-# async def login(email: str, password: str):
 async def login(login_data: LoginModel):
     email: str = login_data.email
     password: str = login_data.password
@@ -224,22 +201,22 @@ def get_all_car():
 
 @app.post("/lender/add_car", tags = ["Lender"])
 
-async def add_car(car_data: CarModel,token:TokenModel):
+async def add_car(add_car: add_car_model):
 
-    name: str = car_data.name
-    model: str = car_data.model
-    licensePlate: str = car_data.licensePlate
-    deliveryArea: str = car_data.deliveryArea
-    price: str = car_data.price
-    carType: str = car_data.carType
-    transmission: str = car_data.transmission
-    seat: str = car_data.seat
-    seatType: str = car_data.seatType
-    fuelSystem: str = car_data.fuelSystem
-    engineCapacity: str = car_data.engineCapacity
-    door: str = car_data.door
+    name: str = add_car.name
+    model: str = add_car.model
+    licensePlate: str = add_car.licensePlate
+    deliveryArea: str = add_car.deliveryArea
+    price: str = add_car.price
+    carType: str = add_car.carType
+    transmission: str = add_car.transmission
+    seat: str = add_car.seat
+    seatType: str = add_car.seatType
+    fuelSystem: str = add_car.fuelSystem
+    engineCapacity: str = add_car.engineCapacity
+    door: str = add_car.door
 
-    temp = site.add_car(name, model, licensePlate, deliveryArea, price, carType, transmission, seat, seatType, fuelSystem, engineCapacity, door,token.token)
+    temp = site.add_car(name, model, licensePlate, deliveryArea, price, carType, transmission, seat, seatType, fuelSystem, engineCapacity, door,add_car.token)
     if temp == "You are not a lender":
         raise HTTPException(status_code=401, detail="You are not a lender")
     elif temp == "Token not found":

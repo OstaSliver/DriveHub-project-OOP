@@ -38,7 +38,22 @@ class CarModel(BaseModel):
     engineCapacity: str
     door: str
     owner: str
-    # license: str
+
+class add_car_model(BaseModel):
+    name: str
+    model: str
+    licensePlate: str
+    deliveryArea: str
+    price: str
+    carType: str
+    transmission: str
+    seat: str
+    seatType: str
+    fuelSystem: str
+    engineCapacity: str
+    door: str
+    owner: str
+    token: str
 
 class FindCarModel(BaseModel):
     location: str

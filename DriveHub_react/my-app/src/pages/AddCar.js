@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // Add missing import for useNavigate
 import { useAuth } from "../provider/AuthContext";
 
 function AddCar() {
@@ -35,61 +35,66 @@ function AddCar() {
     const storage_token = localStorage.getItem("token");
 
     const carData = {
-      name: name,
-      model: model,
-      licensePlate: licensePlate,
-      deliveryArea: deliveryArea,
-      price: price,
-      carType: carType,
-      transmission: transmission,
-      seat: seat,
-      seatType: seatType,
-      fuelSystem: fuelSystem,
-      engineCapacity: engineCapacity,
-      door: door,
-      owner: storage_name,
+      name: `${name}`,
+      model: `${model}`,
+      licensePlate: `${licensePlate}`,
+      deliveryArea: `${deliveryArea}`,
+      price: `${price}`,
+      carType: `${carType}`,
+      transmission: `${transmission}`,
+      seat: `${seat}`,
+      seatType: `${seatType}`,
+      fuelSystem: `${fuelSystem}`,
+      engineCapacity: `${engineCapacity}`,
+      door: `${door}`,
+      owner: `${storage_name}`,
+      token: `${storage_token}`,
     };
 
-    const tokenData = {
-      token: storage_token,
-    };
-
-    const requestData = {
-      car_data: carData,
-      token: tokenData,
-    };
-
-    if (name === "" || model === "" || licensePlate === "" || price === "" || carType === "" || transmission === "" || seat === "" || seatType === "" || fuelSystem === "" || engineCapacity === "" || door === "" || deliveryArea === "") {
+    if (
+      name === "" ||
+      model === "" ||
+      licensePlate === "" ||
+      price === "" ||
+      carType === "" ||
+      transmission === "" ||
+      seat === "" ||
+      seatType === "" ||
+      fuelSystem === "" ||
+      engineCapacity === "" ||
+      door === "" ||
+      deliveryArea === ""
+    ) {
       alert("Please fill in all fields");
       return;
     }
     // try {
-      const response = await fetch("http://127.0.0.1:8000/lender/add_car", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        // body: JSON.stringify(requestData),
-        body: JSON.stringify({carData, tokenData}),
-      });
+    const response = await fetch("http://127.0.0.1:8000/lender/add_car", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      // body: JSON.stringify(requestData),
+      body: JSON.stringify(carData),
+    });
 
-      if (response.status === 401) {
-        console.log("You are not a lender");
-        alert("You are not a lender");
-        navigate("/home");
-      }
-      if (response.status === 402) {
-        console.log("Token is invalid");
-        alert("Token is invalid");
-        handleLogout();
-        navigate("/");
-      }
+    if (response.status === 401) {
+      console.log("You are not a lender");
+      alert("You are not a lender");
+      navigate("/home");
+    }
+    if (response.status === 402) {
+      console.log("Token is invalid");
+      alert("Token is invalid");
+      handleLogout();
+      navigate("/");
+    }
 
-      if (response.status === 200) {
-        console.log("Car added successfully");
-        alert("Car added successfully");
-        navigate("/");
-      }
+    if (response.status === 200) {
+      console.log("Car added successfully");
+      alert("Car added successfully");
+      navigate("/");
+    }
   };
 
   if (role === "customer") {
