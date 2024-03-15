@@ -81,17 +81,6 @@ const TabsForRent = ({ handleSearch , pickupLocation , setPickupLocation, pickup
           >
             เช่ารถขับเอง
           </button>
-
-          <button
-            className={`text-lg font-semibold ${
-              activeTab === "rentWithDriver"
-                ? "text-blue-500 scale-110"
-                : "text-gray-500"
-            }`}
-            onClick={() => setActiveTab("rentWithDriver")}
-          >
-            เช่ารถพร้อมคนขับ
-          </button>
         </div>
 
         {activeTab === "rentOnYourOwn" && (
