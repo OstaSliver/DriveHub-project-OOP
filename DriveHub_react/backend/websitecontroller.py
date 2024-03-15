@@ -222,10 +222,20 @@ class WebsiteController:
     def add_reservation(self,token,license,start_date,end_date,location):
 
         user = self.find_user_with_token(token)
-        for customers in self.customer_list:
-            if user.name == customers.name:
-                customer = customers
+    
+        if user is None:
+            return "Token not found"
+    
+        for customer in self.customer_list:
+            if user.name == customer.name:
                 break
+        else:
+            return "Customer not found"
+    
+        car = self.find_car_with_license(license)
+    
+        if car is None:
+           return "Car not found"
         
         car = self.find_car_with_license(license)
         temp = start_date.split("/")

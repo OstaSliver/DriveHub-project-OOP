@@ -12,7 +12,7 @@ const SearchResultPage = () => {
   const [returnDate, setReturnDate] = useState(null);
   const [availableCar, setAvailableCar] = useState("0");
   const [searchResults, setSearchResults] = useState([]);
-
+  
   useEffect(() => {
     const storedPickupLocation = localStorage.getItem("pickupLocation");
     if (storedPickupLocation) {
@@ -28,9 +28,12 @@ const SearchResultPage = () => {
     if (storedReturnDate) {
       setReturnDate(dayjs(storedReturnDate));
     }
-
-    handleSearch();
   }, []);
+  useEffect(() => {
+    if (pickupLocation && pickupDate && returnDate) {
+      handleSearch();
+    }
+  }, [pickupLocation, pickupDate, returnDate]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);

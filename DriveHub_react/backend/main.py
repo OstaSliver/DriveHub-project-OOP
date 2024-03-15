@@ -40,21 +40,6 @@ site.register("tee@a","tee","0967459032","1234","lender")
 def index(request: Request):
     return RedirectResponse(url="/docs")
 
-
-@app.post('/home')
-async def home(request : Request,token:TokenModel):
-    token_input = token.token
-    temp = site.check_token(str(token_input))
-    try :
-        if temp.role == "customer":
-            return templates.TemplateResponse("customer_home.html", {"request": request, "token": token_input})
-            # return RedirectResponse(url=f"/customer/home")
-        elif temp.role == "lender":
-            return templates.TemplateResponse("lender_home.html", {"request": request, "token": token_input})
-            # return RedirectResponse(url=f"/lender/home")
-    except:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-
 @app.post('/login')
 async def login(login_data: LoginModel):
     email: str = login_data.email
@@ -105,15 +90,10 @@ def get_all_reservations_page(customer_id:int) -> dict:
 @app.get("/api/car", tags = ["API"])
 def get_all_car():
     return {"Cars": {index: {"Car License": obj.license, "Price": obj.price, "Status" : obj.status} for index, obj in enumerate(site.car_list)}}
+
 @app.get("/api/carunavail", tags = ["API"])
 def carunavail():
     return {"Cars": {index: {"Date": obj.unavailable_dates, "License": obj.license} for index, obj in enumerate(site.car_list)}}
-
-@app.get("/find_car")
-
-async def find_car_post():
-    temp = site.check_available_car("ECC","3/3/2024","7/3/2024")
-    return {"Available Car(s)" : {index: {"Car License": obj.license, "Price": obj.price} for index, obj in enumerate(temp)}}
 
 @app.get("/search/car/{license}")
 async def get_car_details(license: str):
@@ -189,15 +169,11 @@ async def my_car_post(tokens: TokenModel):
             {
                 "Name": car.car_detail.name,
                 "Model": car.car_detail.model,
-                "Status": car.status
+                "License": car.license,
             }
             for car in lender_temp.lent_cars
         ]}
     return {"Error": "You are not a lender"}
-
-@app.get("/lender/car", tags =["API"])
-def get_all_car():
-    return {"Cars": {index: str(obj) for index, obj in enumerate(site.car_list)}}
 
 @app.post("/lender/add_car", tags = ["Lender"])
 
@@ -223,38 +199,12 @@ async def add_car(add_car: add_car_model):
         raise HTTPException(status_code=402, detail="Token not found")
     return {"status": "Car Added Successfully"}
 
-
-
-
-@app.get("/lender/{lender_id}/car_list", tags=["Lender"])
-def car_list(lender_id:int) -> dict:
-    for lenders in site.lender_list:
-        if lenders.id == lender_id:
-            temp = lenders.lent_cars
-            return {"Lent Cars": {index: {"license": obj.license, "status": obj.status, "price":obj.price, "location":obj.location} for index, obj in enumerate(temp)}}
-    return {"Error"}
-
 @app.get("/get_car_unavailable_dates", tags = ["Lender"])
 async def get_car_unavailable_dates_post(license:str):
     for cars in site.car_list:
         if cars.license == license:
             return {"Car Unavailable Dates" : {index: {"DAY" : obj.day, "MONTH": obj.month, "YEAR": obj.year} for index, obj in enumerate(cars.unavailable_dates)}}
     return {"Error"}
-
-
-@app.post("/update_car", tags =["API"])
-async def update_car_post(request: Request, lender_id: int = Form(...), new_status: int = Form(...), license: str = Form(...)):
-    if lender_id is None:
-        return {"error": "Lender ID not provided"}
-    if new_status != 1 and new_status != 0:
-        return {"Not Successful"}
-    for Lenders in site.lender_list:
-        if(Lenders.id == lender_id):
-            for Cars in Lenders.lent_cars:
-                if (Cars.license == license):
-                    Lenders.update_car_status(new_status,Cars)
-                    return {"Car Status Changed to":Cars.status}
-    return{"Not Successful"}
 
 @app.get("/user", tags=["API"])
 async def get_all_user():

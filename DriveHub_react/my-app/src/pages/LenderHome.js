@@ -56,8 +56,6 @@ function LenderHome() {
         });
         const data = await response.json();
 
-        // console.log(data.car);
-        // console.log(test_data);
         if (response.status === 402) {
           handleLogout();
           navigate("/login");
@@ -67,7 +65,7 @@ function LenderHome() {
           title: car.Name,
           description: car.Model,
           imageUrl: "https://car-images.bauersecure.com/wp-images/3695/maserati-mc20-lead.jpg",
-          status: car.Status === "AVAILABLE" ? "Available" : "Reserved",
+          license: car.License,
         })));
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -160,7 +158,7 @@ const CarCard = ({ car }) => {
                 marginRight: "10px",
               }}
             >
-              สถานะการจอง:
+              ทะเบียนรถ:
             </h1>
             <h1
               style={{
@@ -169,9 +167,9 @@ const CarCard = ({ car }) => {
                 fontSize: "100%",
                 paddingTop: "2%",
               }}
-              className={car.status === "Available" ? "text-red-600" : "text-green-700"}
+              // className={car.status === "Available" ? "text-red-600" : "text-green-700"}
             >
-              {car.status}
+              {car.license}
             </h1>
           </div>
 

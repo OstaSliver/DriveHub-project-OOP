@@ -26,11 +26,6 @@ export default function App() {
 
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
-
-      {/* {role === "lender" ? (
-          <Route path="addcar" element={<AddCar />} />
-        ) : <Route path="addcar" element={<Home/>} />} */}
-
         <Route path="addcar" element={<AddCar />} />
         <Route path="confirmation" element={<ConfirmationPage />} />
         <Route path="search" element={<SearchResultPage />} />

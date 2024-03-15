@@ -20,36 +20,6 @@ const Navbar = () => {
   const [name, setName] = useState('');
   const [role, setRole] = useState('');
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await fetch('http://127.0.0.1:8000/get_user_token', {
-  //         method: 'POST',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         },
-  //         body: JSON.stringify({ token: localStorage.getItem('token') }),
-  //       });
-
-  //       if(response.status === 402){
-  //         handleLogout();
-  //       }
-  //       const data = await response.json();
-
-    
-  //       // console.log(data);
-  //       setName(data.name);
-  //       setRole(data.role);
-  //     } catch (error) {
-  //       console.error('Error fetching data:', error);
-  //       handleLogout()
-  //       navigate("/")
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, []);
-
   useEffect(() => {
     const storedName = localStorage.getItem('name');
     const storedRole = localStorage.getItem('role');

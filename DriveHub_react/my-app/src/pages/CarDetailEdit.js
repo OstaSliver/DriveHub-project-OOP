@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
-import { Link, useNavigate } from "react-router-dom"; // Add missing import for useNavigate
-import { useAuth } from "../provider/AuthContext";
+import RatingForm from "../components/review";
+import ReservationModal from "../components/ReservationModal";
 
-function AddCar() {
+const EditCar = () => {
   const { auth, handleLogout, role } = useAuth(); // ดึงข้อมูลบทบาทของผู้ใช้จาก Context
   const navigate = useNavigate();
 
@@ -21,12 +21,6 @@ function AddCar() {
   const [door, setDoor] = useState("");
   const [seatType, setSeatType] = useState("");
   const [engineCapacity, setEngineCapacity] = useState("");
-
-  const navigateBack = () => {
-    setTimeout(() => {
-      navigate(-1); // นำผู้ใช้กลับไปยังหน้าเว็บก่อนหน้า
-    }, 100); // จับเวลาเป็น 3 วินาที (3000 มิลลิวินาที)
-  };
 
   const handleSubmitform1 = async (e) => {
     e.preventDefault();
@@ -96,15 +90,6 @@ function AddCar() {
     }
   };
 
-  if (role === "customer") {
-    navigateBack();
-
-    return (
-      <div>
-        <h1 id="Permission Denied">Permission Denied</h1>
-      </div>
-    );
-  }
   return (
     <div
       style={{
@@ -176,7 +161,7 @@ function AddCar() {
       </div>
     </div>
   );
-}
+};
 
 const AddPicture = () => {
   const [file, setFile] = useState();
@@ -466,4 +451,5 @@ const CarForm_3 = ({
   );
 };
 
-export default AddCar;
+export default EditCar;
+
