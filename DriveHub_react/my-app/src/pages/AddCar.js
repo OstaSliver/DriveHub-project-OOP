@@ -63,13 +63,14 @@ function AddCar() {
       alert("Please fill in all fields");
       return;
     }
-    try {
+    // try {
       const response = await fetch("http://127.0.0.1:8000/lender/add_car", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(requestData),
+        // body: JSON.stringify(requestData),
+        body: JSON.stringify({carData, tokenData}),
       });
 
       if (response.status === 401) {
@@ -89,9 +90,6 @@ function AddCar() {
         alert("Car added successfully");
         navigate("/");
       }
-    } catch (err) {
-      console.log(err);
-    }
   };
 
   if (role === "customer") {

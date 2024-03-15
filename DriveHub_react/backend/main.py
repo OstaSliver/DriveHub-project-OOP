@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request , HTTPException,Header,Response,File, UploadFile
+from fastapi import FastAPI, Request , HTTPException,Header,Response,File, UploadFile, Query
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse,JSONResponse
 from fastapi import Form
@@ -7,10 +7,9 @@ from datetime import date,timedelta
 import shutil
 import os
 import uvicorn
-
+from car_detail import Car_detail
 from websitecontroller import WebsiteController
-
-
+from reservation import Reservation
 from fastapi.staticfiles import StaticFiles
 
 from post_model import *
@@ -51,6 +50,18 @@ async def upload_file(file: UploadFile = File(...)):
 @app.get('/')
 def index(request: Request):
     return RedirectResponse(url="/docs")
+
+# @app.get("/get_role")
+# async def get_role(request:Request,token:TokenModel):
+#     token_input = token.token
+#     return {site.check_token(str(token_input))}
+#     try :
+#         if temp == "customer":
+#             return "customer"
+#         elif temp == "lender":
+#             return "lender"
+#     except:
+#         raise HTTPException(status_code=401, detail="Unauthorized")
 
 @app.post('/home')
 async def home(request : Request,token:TokenModel):
@@ -113,12 +124,69 @@ def get_all_reservations_page(customer_id:int) -> dict:
             temp = customers.reservations
             return {"Reservations": {index: str(obj) for index, obj in enumerate(temp)}}
     return {"Error":"Error"}
+##
+@app.get("/api/car", tags = ["API"])
+def get_all_car():
+    return {"Cars": {index: {"Car License": obj.license, "Price": obj.price, "Status" : obj.status} for index, obj in enumerate(site.car_list)}}
+@app.get("/api/carunavail", tags = ["API"])
+def carunavail():
+    return {"Cars": {index: {"Date": obj.unavailable_dates, "License": obj.license} for index, obj in enumerate(site.car_list)}}
+
+@app.get("/find_car")
+
+async def find_car_post():
+    temp = site.check_available_car("ECC","3/3/2024","7/3/2024")
+    return {"Available Car(s)" : {index: {"Car License": obj.license, "Price": obj.price} for index, obj in enumerate(temp)}}
+
+@app.get("/search/car/{license}")
+async def get_car_details(license: str):
+    for cars in site.car_list:
+        if cars.license == license:
+            detail = cars.car_detail
+            return {"car_detail": [
+                {
+                    "name":detail.name,
+                    "model":detail.model,
+                    "seats":detail.seats,
+                    "fuel_system":detail.fuelSystem,
+                    "doors":detail.doors,
+                    "transmission":detail.transmission,
+                    "seat_type":detail.seatType,
+                    "engine_capacity":detail.engineCapacity,
+                    "price":detail.price,
+                    "owner": cars.owner
+                }
+            ]}
+
+    raise HTTPException(status_code=404, detail="Car not found")
+
+@app.post("/make_reservation")
+async def make_reservation(data: ReservationConfirmation):
+
+  
+    check_token = site.find_user_with_token(str(data.token))
+    if check_token is None:
+        raise HTTPException(status_code=402, detail="Token not found")
+    
+    token = data.token
+    license = data.license
+    location = data.location
+    start_date = data.start_date
+    end_date = data.end_date
+    site.add_reservation(token,license,start_date,end_date,location)
+    return {"message": data}
+
+
+@app.get("/get_all_reservations")
+def get_all_reservations():
+    return {"Reservations" : {index: {"License":obj.car,"Location" : obj.location,"Start Date":obj.start_date,"End Date":obj.end_date} for index, obj in enumerate(site.reservation_list)}}
+
 
 @app.post("/search_car", tags=["Customer"])
 async def search_car(find_car_data: FindCarModel):
     location: str = find_car_data.location
-    pickupdate: date = find_car_data.pickupdate
-    returndate: date = find_car_data.returndate
+    pickupdate: str = find_car_data.pickupdate
+    returndate: str = find_car_data.returndate
 
     temp = site.check_available_car(location,pickupdate,returndate)
     return {"car": [
@@ -126,7 +194,7 @@ async def search_car(find_car_data: FindCarModel):
                 "Name": car.car_detail.name,
                 "Model": car.car_detail.model,
                 "price": car.price,
-                "license": car.license
+                "license" : car.license
             }
             for car in temp
         ]}
@@ -150,39 +218,26 @@ async def my_car_post(tokens: TokenModel):
         ]}
     return {"Error": "You are not a lender"}
 
-
-
-@app.post("/make_reservation")
-async def make_reservation_post(request: Request, customer_id:int = Form(...), license:str = Form(...), amount:int=Form(...),start_date:date = Form(...), end_date:date = Form(...)):
-    for customers in site.customer_list:
-        if customers.id == customer_id:
-            for cars in site.car_list:
-                if cars.license == license:
-                    start = str(start_date).split("-")
-                    end = str(end_date).split("-")
-                    new_start = f"{start[2]}/{start[1]}/{start[0]}"
-                    new_end = f"{end[2]}/{end[1]}/{end[0]}"
-                    site.add_reservation(customers,cars,amount,new_start,new_end)
-                    return {"Successful Reservation":{"From" : new_start, "To": new_end}}
-
 @app.get("/lender/car", tags =["API"])
 def get_all_car():
     return {"Cars": {index: str(obj) for index, obj in enumerate(site.car_list)}}
 
 @app.post("/lender/add_car", tags = ["Lender"])
+
 async def add_car(car_data: CarModel,token:TokenModel):
+
     name: str = car_data.name
     model: str = car_data.model
     licensePlate: str = car_data.licensePlate
     deliveryArea: str = car_data.deliveryArea
-    price: int = car_data.price
+    price: str = car_data.price
     carType: str = car_data.carType
     transmission: str = car_data.transmission
-    seat: int = car_data.seat
+    seat: str = car_data.seat
     seatType: str = car_data.seatType
     fuelSystem: str = car_data.fuelSystem
-    engineCapacity: int = car_data.engineCapacity
-    door: int = car_data.door
+    engineCapacity: str = car_data.engineCapacity
+    door: str = car_data.door
 
     temp = site.add_car(name, model, licensePlate, deliveryArea, price, carType, transmission, seat, seatType, fuelSystem, engineCapacity, door,token.token)
     if temp == "You are not a lender":
@@ -202,22 +257,13 @@ def car_list(lender_id:int) -> dict:
             return {"Lent Cars": {index: {"license": obj.license, "status": obj.status, "price":obj.price, "location":obj.location} for index, obj in enumerate(temp)}}
     return {"Error"}
 
-@app.post("/get_car_unavailable_dates", tags = ["Lender"])
-async def get_car_unavailable_dates_post(request: Request,lender_id:int = Form(...), license: str = Form(...)):
+@app.get("/get_car_unavailable_dates", tags = ["Lender"])
+async def get_car_unavailable_dates_post(license:str):
     for cars in site.car_list:
         if cars.license == license:
-            if cars.owner.id == lender_id:
-                return {"Car Unavailable Dates" : {index: {"DAY" : obj.day, "MONTH": obj.month, "YEAR": obj.year} for index, obj in enumerate(cars.unavailable_dates)}}
+            return {"Car Unavailable Dates" : {index: {"DAY" : obj.day, "MONTH": obj.month, "YEAR": obj.year} for index, obj in enumerate(cars.unavailable_dates)}}
     return {"Error"}
 
-# @app.post("/add_car", tags =["API"])
-# async def add_car_post(request: Request, lender_id: int = Form(...),license:str=Form(...), location: str = Form(...), price: int = Form(...)):
-#     for lenders in site.lender_list:
-#         if lenders.id == lender_id:
-#             temp = lenders.lend_car("AVAILABLE",license,location,price)
-#             site.car_list.append(temp)
-#             return {"Successful"}
-#     return {"Not Successful"}
 
 @app.post("/update_car", tags =["API"])
 async def update_car_post(request: Request, lender_id: int = Form(...), new_status: int = Form(...), license: str = Form(...)):

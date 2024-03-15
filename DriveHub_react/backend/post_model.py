@@ -38,10 +38,16 @@ class CarModel(BaseModel):
     engineCapacity: str
     door: str
     owner: str
+    # license: str
 
 class FindCarModel(BaseModel):
     location: str
     pickupdate: str
     returndate: str
 
-    
+class ReservationConfirmation(BaseModel):
+    token: str
+    license: str
+    location: str
+    start_date: str
+    end_date: str

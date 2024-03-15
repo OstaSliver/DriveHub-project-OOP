@@ -1,15 +1,15 @@
-import React, { useState ,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import dayjs, { Dayjs } from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { Link } from "react-router-dom";
 
 const SearchResultPage = () => {
- 
   const [pickupLocation, setPickupLocation] = useState("");
-  const [pickupDate, setPickupDate] = useState(null); // เปลี่ยนเป็น null เพื่อให้มันเป็นวัตถุ Dayjs ตอนเริ่มต้น
-  const [returnDate, setReturnDate] = useState(null); // เปลี่ยนเป็น null เพื่อให้มันเป็นวัตถุ Dayjs ตอนเริ่มต้น
+  const [pickupDate, setPickupDate] = useState(null);
+  const [returnDate, setReturnDate] = useState(null);
   const [availableCar, setAvailableCar] = useState("0");
   const [searchResults, setSearchResults] = useState([]);
 
@@ -18,16 +18,18 @@ const SearchResultPage = () => {
     if (storedPickupLocation) {
       setPickupLocation(storedPickupLocation);
     }
-    
+
     const storedPickupDate = localStorage.getItem("pickupDate");
     if (storedPickupDate) {
-      setPickupDate(dayjs(storedPickupDate)); // แปลงข้อมูลที่อ่านมาจาก LocalStorage เป็น Dayjs
+      setPickupDate(dayjs(storedPickupDate));
     }
-    
+
     const storedReturnDate = localStorage.getItem("returnDate");
     if (storedReturnDate) {
-      setReturnDate(dayjs(storedReturnDate)); // แปลงข้อมูลที่อ่านมาจาก LocalStorage เป็น Dayjs
+      setReturnDate(dayjs(storedReturnDate));
     }
+
+    handleSearch();
   }, []);
 
   const formatDate = (dateString) => {
@@ -39,44 +41,10 @@ const SearchResultPage = () => {
     return `${day}/${month}/${year}`;
   };
 
-  // const dummyData = [
-  //   {
-  //     id: 1,
-  //     title: "ชื่อ",
-  //     description: "รุ่น",
-  //     imageUrl:
-  //       "https://car-images.bauersecure.com/wp-images/3695/maserati-mc20-lead.jpg",
-  //     price: "Available",
-  //     review: "Good",
-  //   },
-  //   {
-  //     id: 2,
-  //     title: "ชื่อ",
-  //     description: "รุ่น",
-  //     imageUrl:
-  //       "https://car-images.bauersecure.com/wp-images/3695/maserati-mc20-lead.jpg",
-  //     price: "Reserved",
-  //     review: "Excellent",
-  //   },
-  //   {
-  //     id: 3,
-  //     title: "ชื่อ",
-  //     description: "รุ่น",
-  //     imageUrl:
-  //       "https://car-images.bauersecure.com/wp-images/3695/maserati-mc20-lead.jpg",
-  //     price: "Available",
-  //     review: "Average",
-  //   },
-  // ];
-
   const handleSearch = () => {
-    const results_car = [];
-    if (pickupLocation === "" || pickupDate === "" || returnDate === "") {
+    if (pickupLocation === "" || pickupDate === null || returnDate === null) {
       alert("Please fill in all fields");
     } else {
-      // console.log(pickupLocation);
-      // console.log(formatDate(pickupDate));
-      // console.log(formatDate(returnDate));
       const fetchData = async () => {
         try {
           const response = await fetch("http://127.0.0.1:8000/search_car", {
@@ -84,22 +52,29 @@ const SearchResultPage = () => {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ location: pickupLocation, pickupdate: formatDate(pickupDate), returndate: formatDate(returnDate) }),
+            body: JSON.stringify({
+              location: pickupLocation,
+              pickupdate: formatDate(pickupDate),
+              returndate: formatDate(returnDate),
+            }),
           });
+
           const data = await response.json();
 
-          setSearchResults(data.car.map((car, index) => ({
-            id: index + 1,
-            title: car.Name,
-            description: car.Model,
-            imageUrl: "https://car-images.bauersecure.com/wp-images/3695/maserati-mc20-lead.jpg",
-            price: car.price,
-            review: "Good",
-          })));
+          setSearchResults(
+            data.car.map((car, index) => ({
+              id: index + 1,
+              title: car.Name,
+              description: car.Model,
+              imageUrl:
+                "https://car-images.bauersecure.com/wp-images/3695/maserati-mc20-lead.jpg",
+              price: car.price,
+              review: "Good",
+              license: car.license,
+            }))
+          );
 
           setAvailableCar(data.car.length);
-
-          ;
         } catch (error) {
           console.error("Error fetching data:", error);
         }
@@ -107,7 +82,6 @@ const SearchResultPage = () => {
       fetchData();
     }
   };
-
 
   return (
     <div>
@@ -119,7 +93,7 @@ const SearchResultPage = () => {
           style={{ marginLeft: "10%", marginTop: "2%", marginRight: "10%" }}
         >
           <div className="flex-auto w-64 bg-gray-100 p-4 rounded-lg">
-            <label className="block mb-2 font-semibold">จุดรับ-คืนรถ</label>
+            <label className="block mb-2 font-semibold">Pickup Location</label>
             <select
               type="text"
               value={pickupLocation}
@@ -130,7 +104,6 @@ const SearchResultPage = () => {
               <option>พระเทพ</option>
               <option>ECC</option>
               <option>ตึกโหล</option>
-              
             </select>
           </div>
 
@@ -138,24 +111,23 @@ const SearchResultPage = () => {
           <div className="flex-auto w-64 bg-gray-100 p-4 rounded-lg flex flex-col">
             <div>
               <label className="block mb-2 font-semibold">
-                วัน-เวลารับรถคืนรถ
+                Pickup and Return Date
               </label>
             </div>
             <div className="flex ">
               <div className="flex flex-col w-1/2 mr-3">
                 {" "}
-                <p>วันรับรถ</p>
+                <p>Pickup Date</p>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
                     value={pickupDate}
                     onChange={(text) => setPickupDate(text)}
-
                   />
                 </LocalizationProvider>
               </div>
               <div className="flex flex-col w-1/2 mr-3 ">
                 {" "}
-                <p>วันคืนรถ</p>
+                <p>Return Date</p>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
                     value={returnDate}
@@ -183,8 +155,8 @@ const SearchResultPage = () => {
         style={{ marginLeft: "25%", marginTop: "2%", marginRight: "20%" }}
       >
         <div className="flex items-center mb-4">
-          <h1 className="text-2xl text-bold">
-            ผลการค้นหา: รถว่างทั้งหมด {availableCar} คัน
+          <h1 className="text-2xl font-bold">
+            Search Results: {availableCar} available cars
           </h1>
         </div>
 
@@ -236,7 +208,7 @@ const SearchResultPage = () => {
                           marginRight: "10px",
                         }}
                       >
-                        ราคา:
+                        Price:
                       </h1>
                       <h1
                         style={{
@@ -262,9 +234,12 @@ const SearchResultPage = () => {
                     >
                       Review: {result.review}
                     </p>
-                    <button className="bg-gradient-to-r from-blue-500 to-green-500 text-white hover:from-blue-400 hover:to-green-400 w-auto pl-10 pr-10 rounded-full mt-5" value={result.license}>
-                      รายละเอียดรถเช่า
-                    </button>
+
+                    <Link to={`car/${result.license}`}>
+                      <button className="bg-gradient-to-r from-blue-500 to-green-500 text-white hover:from-blue-400 hover:to-green-400 w-auto pl-10 pr-10 rounded-full mt-5">
+                        Car Details
+                      </button>
+                    </Link>
                   </div>
                 </div>
               ))

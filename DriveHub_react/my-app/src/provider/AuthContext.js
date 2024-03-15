@@ -14,11 +14,9 @@ const useAuth = () => useContext(AuthContext);
 
 const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState(() => {
-    // Check local storage for auth state on component mount
     return JSON.parse(localStorage.getItem('auth')) || false;
   });
   const [role, setRole] = useState(() => {
-    // Check local storage for role on component mount
     return localStorage.getItem('role') || 'customer';
   });
 
@@ -32,7 +30,6 @@ const AuthProvider = ({ children }) => {
     setRole('customer');
     setAuth(false);
     setName('');
-    localStorage.set('refreshed','false');
   };
 
 

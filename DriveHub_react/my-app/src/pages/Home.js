@@ -171,7 +171,7 @@ const TabsForRent = ({ handleSearch , pickupLocation , setPickupLocation, pickup
                     <option>select</option>
                   <option>พระเทพ</option>
                   <option>ECC</option>
-                  <option>ตึกโกล</option>
+                  <option>ตึกโหล</option>
                 </select>
               </div>
 
